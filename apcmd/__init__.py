@@ -1,7 +1,7 @@
 # Licensed under a 3-clause BSD style license - see LICENSE.rst
 
 """
-This is an Astropy affiliated package.
+IRAF replacement / command line tools collection.
 """
 
 # Affiliated packages may add whatever they like to this file, but
