@@ -15,7 +15,7 @@ when have all values, make masked numpy arrays, port into astropy table
 import glob
 import fnmatch
 import re
-from future.utils import viewitems
+from six import iteritems
 
 # THIRD-PARTY
 import numpy as np
@@ -49,8 +49,7 @@ class Hselect(object):
         self.select()
         self.__dict_to_table()
 
-    def return_table(self):
-        return self.table
+
 
     def select(self):
         """
@@ -144,7 +143,7 @@ class Hselect(object):
 
         # now fill in arrays and mask arrays
         for indx, efile in enumerate(file_ext_list):
-            for (ikeyword,value) in viewitems(self.final_key_dict[efile]):
+            for (ikeyword,value) in iteritems(self.final_key_dict[efile]):
                 ikeyword_indx = dumb_indx_dict[ikeyword]
                 array_list[ikeyword_indx+2][indx] = value
                 mask_list[ikeyword_indx][indx] = False
