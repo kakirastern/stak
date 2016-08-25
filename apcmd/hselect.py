@@ -20,22 +20,22 @@ from six import iteritems
 # THIRD-PARTY
 import numpy as np
 from astropy.io import fits
-from astropy.table import Table,Column
+from astropy.table import Table
 
 
 class Hselect(object):
-    """hselect IRAF replacement.  Will ideally contain full functionality of IRAF version
+    """hselect IRAF replacement.  Will ideally contain full functionality of IRAF version.
+
+    EXAMPLE:
+    > myObj = Hselect("jcz*","BUNIT,TIME-OBS",extension="0,1,2,3",expr="BUNIT=ELECTRONS")
+    > myObj.table
 
     """
 
     def __init__(self, filename_list, keyword_list, extension='all', expr="None"):
         """
-        Parameters
-        ----------
-        filename_list : str
-        keyword_list : str
-        extension : str
-        expr : str
+        set initial parameters, call class functions for preforming selection
+        and formatting to masked astropy table.
         """
 
         self.filename_list = self.__filename_translate(filename_list)
@@ -49,16 +49,11 @@ class Hselect(object):
         self.select()
         self.__dict_to_table()
 
-
-
     def select(self):
         """
-        Perform hselect query on provided filenames
+        Perform hselect like query on provided file names, inputs were setup in init, and output is
+        stored in self.final_key_dict
 
-        Returns
-        -------
-        out_table : astropy Table
-            final astropy table with request keywords.  Using masked numpy arrays.
         """
 
         if self.extension != 'all':
@@ -110,7 +105,8 @@ class Hselect(object):
             hdulist.close()
 
     def __dict_to_table(self):
-        """Format the final dictionary of keyword matches into a masked astropy table
+        """Format the final dictionary of keyword matches into a masked astropy table.
+        Right now only taking data types of float and str.
 
         """
 
@@ -129,7 +125,7 @@ class Hselect(object):
 
         # make initial empty data and bool arrays
         for indx, key_tuple in enumerate(final_keyword_list):
-            #make dumb keyword index dict, probably a better way to do this
+            # make dumb keyword index dict, probably a better way to do this
             dumb_indx_dict[key_tuple[0]] = indx
             if key_tuple[1] == str:
                 data_type = 'S68'
@@ -143,13 +139,13 @@ class Hselect(object):
 
         # now fill in arrays and mask arrays
         for indx, efile in enumerate(file_ext_list):
-            for (ikeyword,value) in iteritems(self.final_key_dict[efile]):
+            for (ikeyword, value) in iteritems(self.final_key_dict[efile]):
                 ikeyword_indx = dumb_indx_dict[ikeyword]
                 array_list[ikeyword_indx+2][indx] = value
                 mask_list[ikeyword_indx][indx] = False
 
         # put arrays and masks together into one masked array
-        for indx,mask_arr in enumerate(mask_list):
+        for indx, mask_arr in enumerate(mask_list):
             array_list[indx+2] = np.ma.array(array_list[indx+2], mask=mask_arr)
 
         # put everything into an astropy table
@@ -158,13 +154,13 @@ class Hselect(object):
     @staticmethod
     def __eval_keyword_expr(header, str_expr):
         """Translate the input string expression (only accepting AND's for now)
-        into True or False on given header
+        into True or False on given header.
 
         Parameters
         ----------
         header : fits header
 
-        str_exp : str
+        str_expr : str
             input string that contains given header value expression
 
         Returns
@@ -222,7 +218,8 @@ class Hselect(object):
 
     @staticmethod
     def __filename_translate(filename_string):
-        """Translate the input filename string into list. Might need to take in '*' wildcard.
+        """Translate the input filename string into list of file names. Might need to take in '*' wildcard.
+        This might be replaceable with an astropy function (Warren mentioned).
 
         Parameters
         ----------
@@ -231,7 +228,8 @@ class Hselect(object):
 
         Returns
         -------
-        file_list : list of filenames
+        file_list : list
+            final list of file names (paths included)
         """
 
         file_set = set()
@@ -247,7 +245,7 @@ class Hselect(object):
 
 
 def wildcard_matches(header, wildcard_key):
-    """Take wildcard keyword and return all matches found in header
+    """Take wildcard keyword and return all keyword name matches found in header.
 
     Parameters
     ----------
@@ -261,14 +259,27 @@ def wildcard_matches(header, wildcard_key):
     """
 
     header_keys = header.keys()
-    if 'COMMENT' in header_keys: header_keys.remove('COMMENT')
-    if 'HISTORY' in header_keys: header_keys.remove('HISTORY')
+    if 'COMMENT' in header_keys:
+        header_keys.remove('COMMENT')
+    if 'HISTORY' in header_keys:
+        header_keys.remove('HISTORY')
     regex = fnmatch.translate(wildcard_key.lower())
     matches = [key for key in header_keys if re.match(regex, key.lower())]
     return matches
 
 
 def to_number(s):
+    """Take string, change to float if possible, otherwise return string unchanged.
+
+    Parameters
+    ----------
+    s : str
+
+    Returns
+    -------
+    s : str or float
+    """
+
     try:
         s = float(s)
         return s, float
