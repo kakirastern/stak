@@ -12,13 +12,13 @@ when have all values, make masked numpy arrays, port into astropy table
 """
 
 # STDLIB
-import glob
-import fnmatch
-import re
 from six import iteritems
+import operator
+import re
 
 # THIRD-PARTY
 import numpy as np
+from stsci.tools import parseinput
 from astropy.io import fits
 from astropy.table import Table
 
@@ -38,7 +38,7 @@ class Hselect(object):
         and formatting to masked astropy table.
         """
 
-        self.filename_list = self.__filename_translate(filename_list)
+        self.filename_list = parseinput.parseinput(filename_list)[0]
         self.final_key_dict = {}
         self.keyword_list = keyword_list.split(",")
         self.final_key_set = set()
@@ -59,14 +59,14 @@ class Hselect(object):
         if self.extension != 'all':
             try:
                 ext_list = [int(x) for x in self.extension.split(",")]
-            except:
-                print("Incorrect syntax for extension list: {}".format(self.extension))
+            except ValueError:
+                print("Incorrect syntax for extension list, must all be integers: {}".format(self.extension))
 
         # loop through all files, find requested keywords
         for filename in self.filename_list:
             try:
                 hdulist = fits.open(filename)
-            except:
+            except IOError:
                 print("couldn't open file {}".format(filename))
 
             if self.extension == 'all':
@@ -110,7 +110,7 @@ class Hselect(object):
 
         """
 
-        # NOPE, need to setup all numpy arrays first, then put into table, adding columns is apparently slow
+        # need to setup all numpy arrays first, then put into table, adding columns is apparently slow
         file_ext_list = self.final_key_dict.keys()
         num_rows = len(file_ext_list)
         final_keyword_list = list(self.final_key_set)
@@ -154,7 +154,8 @@ class Hselect(object):
     @staticmethod
     def __eval_keyword_expr(header, str_expr):
         """Translate the input string expression (only accepting AND's for now)
-        into True or False on given header.
+        into True or False on given header.  Not enforcing spaces right now, but
+        could if we want the ability to have ><= character sets in keyword values.
 
         Parameters
         ----------
@@ -169,83 +170,27 @@ class Hselect(object):
 
         """
 
+        operator_dict = {'=':operator.eq, '<':operator.lt, '<=':operator.le, '>':operator.gt, '>=':operator.ge}
         condition_list = str_expr.split("AND")
+
+        search = re.compile("([><=]?[=])")
         for elem in condition_list:
-            # There must be a better way to do this, need to go back and change it
-            if '=' in elem:
-                elem = elem.split("=")
-                keyword = elem[0].strip(" ")
-                value, data_type = to_number(elem[1].strip(" "))
-                if keyword not in header.keys():
-                    return False
-                if header[keyword] != value:
-                    return False
-            elif '>' in elem:
-                elem = elem.split(">")
-                keyword = elem[0].strip(" ")
-                value, data_type = to_number(elem[1].strip(" "))
-                if keyword not in header.keys() or data_type == str:
-                    return False
-                if header[keyword] <= value:
-                    return False
-            elif '>=' in elem:
-                elem = elem.split(">=")
-                keyword = elem[0].strip(" ")
-                value, data_type = to_number(elem[1].strip(" "))
-                if keyword not in header.keys() or data_type == str:
-                    return False
-                if header[keyword] < value:
-                    return False
-            elif '<=' in elem:
-                elem = elem.split("<=")
-                keyword = elem[0].strip(" ")
-                value, data_type = to_number(elem[1].strip(" "))
-                if keyword not in header.keys() or data_type == str:
-                    return False
-                if header[keyword] > value:
-                    return False
-            elif '<' in elem:
-                elem = elem.split("<")
-                keyword = elem[0].strip(" ")
-                value, data_type = to_number(elem[1].strip(" "))
-                if keyword not in header.keys() or data_type == str:
-                    return False
-                if header[keyword] >= value:
-                    return False
-            else:
-                print("WARNING, cannot accept syntax of the expression: {}".format(elem))
+            split_list = re.split(search,elem)
+            check_function = operator_dict[split_list[1]]
+
+            #check for keyword
+            if split_list[0].strip() not in header.keys():
+                return False
+            #now check condition
+            if not check_function(header[split_list[0]].strip(), split_list[2].strip()):
+                return False
+
         return True
-
-    @staticmethod
-    def __filename_translate(filename_string):
-        """Translate the input filename string into list of file names. Might need to take in '*' wildcard.
-        This might be replaceable with an astropy function (Warren mentioned).
-
-        Parameters
-        ----------
-        filename_string : str
-            input string from select call, make user input style easier
-
-        Returns
-        -------
-        file_list : list
-            final list of file names (paths included)
-        """
-
-        file_set = set()
-        split_list = filename_string.split(",")
-        split_list = [elem.strip(' ') for elem in split_list]
-        for name in split_list:
-            if '*' in name:
-                glob_set = set(glob.glob(name))
-                file_set |= glob_set
-            else:
-                file_set.add(name)
-        return list(file_set)
 
 
 def wildcard_matches(header, wildcard_key):
     """Take wildcard keyword and return all keyword name matches found in header.
+    Throwing out COMMENT and HISTORY cards.
 
     Parameters
     ----------
@@ -263,8 +208,7 @@ def wildcard_matches(header, wildcard_key):
         header_keys.remove('COMMENT')
     if 'HISTORY' in header_keys:
         header_keys.remove('HISTORY')
-    regex = fnmatch.translate(wildcard_key.lower())
-    matches = [key for key in header_keys if re.match(regex, key.lower())]
+    matches = header[wildcard_key].keys()
     return matches
 
 
