@@ -173,16 +173,24 @@ class Hselect(object):
         operator_dict = {'=':operator.eq, '<':operator.lt, '<=':operator.le, '>':operator.gt, '>=':operator.ge}
         condition_list = str_expr.split("AND")
 
-        search = re.compile("([><=]?[=])")
+        search = re.compile("([><=]{1,1}={,1})")
         for elem in condition_list:
             split_list = re.split(search,elem)
-            check_function = operator_dict[split_list[1]]
+            if len(split_list) != 3:
+                print("Incorrect expression")
+                return False
+            try:
+                check_function = operator_dict[split_list[1]]
+            except KeyError:
+                print("unexpected evaluator: {}".format(split_list[1]))
+                return False
 
             #check for keyword
             if split_list[0].strip() not in header.keys():
                 return False
             #now check condition
-            if not check_function(header[split_list[0]].strip(), split_list[2].strip()):
+            right_side, trash = to_number(split_list[2].strip())
+            if not check_function(header[split_list[0].strip()], right_side):
                 return False
 
         return True

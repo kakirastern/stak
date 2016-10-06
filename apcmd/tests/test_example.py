@@ -16,6 +16,8 @@ def test_deprecation():
 def test_hselect_basic():
     from ..hselect import Hselect
     from astropy.table import Table
+    import numpy as np
+
     test_dir = "/eng/ssb/iraf_transition/test_data/"
 
     data_rows = [('/eng/ssb/iraf_transition/test_data/iczgs3y5q_flt.fits', 1, 'ELECTRONS/S'),
@@ -24,13 +26,14 @@ def test_hselect_basic():
                           dtype=('S80', 'int64', 'S68'))
     hobj = Hselect(test_dir+'iczgs3y5q_flt.fits', 'BUNIT', extension='1,2')
 
-    #for boo in correct_table == hobj.table:
-    #    assert boo
+    for boo in np.nditer(correct_table == hobj.table):
+        assert boo
 
 
 def test_hselect_wildcard():
     from ..hselect import Hselect
     from astropy.table import Table
+    import numpy as np
     test_dir = "/eng/ssb/iraf_transition/test_data/"
 
     data_rows = [('/eng/ssb/iraf_transition/test_data/iczgs3y5q_flt.fits', 0,
@@ -39,10 +42,21 @@ def test_hselect_wildcard():
                           dtype=('S80', 'int64', 'S68', 'S68'))
     hobj = Hselect(test_dir+'iczgs3y5q_*.fits', 'FILE*', extension='0')
 
-    #for boo in correct_table == hobj.table:
-    #     assert boo
+    for boo in np.nditer(correct_table == hobj.table):
+        assert boo
 
 
-#def test_eval_keyword_lessthen():
+def test_eval_keyword_greaterthen_equal():
+    from ..hselect import Hselect
+    from astropy.table import Table
+    import numpy as np
+    test_dir = "/eng/ssb/iraf_transition/test_data/"
 
-#def test_eval_keyword_equalto():
+    data_rows = [('/eng/ssb/iraf_transition/test_data/iczgs3y5q_flt.fits', 0,
+                  652.937744)]
+    correct_table = Table(rows=data_rows, names=('Filename', 'ExtNumber', 'EXPTIME'),
+                          dtype=('S80', 'int64', 'float64'))
+    hobj = Hselect(test_dir + 'icz*', 'BUNIT,EXPTIME', expr="EXPTIME >= 620")
+
+    for boo in np.nditer(correct_table == hobj.table):
+        assert boo
