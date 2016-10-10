@@ -23,6 +23,9 @@ from astropy.io import fits
 from astropy.table import Table
 
 
+__all__ = ['Hselect', 'wildcard_matches', 'to_number']
+
+
 class Hselect(object):
     """hselect IRAF replacement.  Will ideally contain full functionality of IRAF version.
 

@@ -26,14 +26,16 @@ def test_hselect_basic():
                           dtype=('S80', 'int64', 'S68'))
     hobj = Hselect(test_dir+'iczgs3y5q_flt.fits', 'BUNIT', extension='1,2')
 
-    for boo in np.nditer(correct_table == hobj.table):
-        assert boo
+    for colname in correct_table.colnames:
+        assert np.all(correct_table[colname] == hobj.table[colname])
+
 
 
 def test_hselect_wildcard():
     from ..hselect import Hselect
     from astropy.table import Table
     import numpy as np
+
     test_dir = "/eng/ssb/iraf_transition/test_data/"
 
     data_rows = [('/eng/ssb/iraf_transition/test_data/iczgs3y5q_flt.fits', 0,
@@ -42,14 +44,15 @@ def test_hselect_wildcard():
                           dtype=('S80', 'int64', 'S68', 'S68'))
     hobj = Hselect(test_dir+'iczgs3y5q_*.fits', 'FILE*', extension='0')
 
-    for boo in np.nditer(correct_table == hobj.table):
-        assert boo
+    for colname in correct_table.colnames:
+        assert np.all(correct_table[colname] == hobj.table[colname])
 
 
 def test_eval_keyword_greaterthen_equal():
     from ..hselect import Hselect
     from astropy.table import Table
     import numpy as np
+
     test_dir = "/eng/ssb/iraf_transition/test_data/"
 
     data_rows = [('/eng/ssb/iraf_transition/test_data/iczgs3y5q_flt.fits', 0,
@@ -58,5 +61,7 @@ def test_eval_keyword_greaterthen_equal():
                           dtype=('S80', 'int64', 'float64'))
     hobj = Hselect(test_dir + 'icz*', 'BUNIT,EXPTIME', expr="EXPTIME >= 620")
 
-    for boo in np.nditer(correct_table == hobj.table):
-        assert boo
+    for colname in correct_table.colnames:
+        assert np.all(correct_table[colname] == hobj.table[colname])
+
+    # array values - numpy.allclose(), might want to use
