@@ -7,4 +7,4 @@ this package is here:
 .. toctree::
   :maxdepth: 2
 
-  apcmd/index.rst
+  stsdas/index.rst
