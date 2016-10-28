@@ -1,4 +1,5 @@
 """ hselect
+flag 1
 algorithm outline:
 translate inputs, get filelist
 
@@ -12,9 +13,9 @@ when have all values, make masked numpy arrays, port into astropy table
 """
 
 # STDLIB
-from six import iteritems
+from six import iteritems, string_types
 import operator
-import re
+import pyparsing as pyp
 
 # THIRD-PARTY
 import numpy as np
@@ -30,7 +31,7 @@ class Hselect(object):
     """hselect IRAF replacement.  Will ideally contain full functionality of IRAF version.
 
     EXAMPLE:
-    > myObj = Hselect("jcz*","BUNIT,TIME-OBS",extension="0,1,2,3",expr="BUNIT=ELECTRONS")
+    > myObj = Hselect("jcz*","BUNIT,TIME-OBS",extension="0,1,2,3",expr="BUNIT='ELECTRONS'")
     > myObj.table
 
     """
@@ -83,7 +84,8 @@ class Hselect(object):
                 # would be nice to use interpreter pattern here for more advanced expressions,
                 # but for now I'll stick with just 'AND's. check is expr is valid only once,
                 # earlier in code.
-                if self.expr != "None" and not self.__eval_keyword_expr(header, self.expr):
+
+                if self.expr != "None" and not depth_parse(expr_pyparse(self.expr), header):
                     continue
 
                 self.final_key_dict[outer_key] = {}
@@ -154,49 +156,41 @@ class Hselect(object):
         # put everything into an astropy table
         self.table = Table(array_list, names=tuple(col_names), dtype=tuple(data_types))
 
-    @staticmethod
-    def __eval_keyword_expr(header, str_expr):
-        """Translate the input string expression (only accepting AND's for now)
-        into True or False on given header.  Not enforcing spaces right now, but
-        could if we want the ability to have ><= character sets in keyword values.
 
-        Parameters
-        ----------
-        header : fits header
+def eval_keyword_expr(list_expr, header):
+    """Translate the input string expression into True or False on given header.
+    This function takes the smallest chunk of the expression in a list format,
+    i.e. [keyword, operator, value].
 
-        str_expr : str
-            input string that contains given header value expression
+    Parameters
+    ----------
+    list_expr : list
+        a list of three elements, keyword, operator, value
 
-        Returns
-        -------
-        boolean : boolean
+    header : fits header
+        input header to test keyword value against
 
-        """
+    Returns
+    -------
+    boolean : boolean
 
-        operator_dict = {'=':operator.eq, '<':operator.lt, '<=':operator.le, '>':operator.gt, '>=':operator.ge}
-        condition_list = str_expr.split("AND")
+    """
 
-        search = re.compile("([><=]{1,1}={,1})")
-        for elem in condition_list:
-            split_list = re.split(search,elem)
-            if len(split_list) != 3:
-                print("Incorrect expression")
-                return False
-            try:
-                check_function = operator_dict[split_list[1]]
-            except KeyError:
-                print("unexpected evaluator: {}".format(split_list[1]))
-                return False
+    operator_dict = {'=': operator.eq, '<': operator.lt, '<=': operator.le, '>': operator.gt, '>=': operator.ge}
 
-            #check for keyword
-            if split_list[0].strip() not in header.keys():
-                return False
-            #now check condition
-            right_side, trash = to_number(split_list[2].strip())
-            if not check_function(header[split_list[0].strip()], right_side):
-                return False
+    if len(list_expr) is 3:
+        check_function = operator_dict[list_expr[1]]
 
-        return True
+        #check for keyword
+        if list_expr[0] not in header.keys():
+            return False
+
+        #now check condition
+        right_side, trash = to_number(list_expr[2])
+        return check_function(header[list_expr[0]], right_side)
+    else:
+        #should add exception catching here
+        return False
 
 
 def wildcard_matches(header, wildcard_key):
@@ -221,6 +215,78 @@ def wildcard_matches(header, wildcard_key):
         header_keys.remove('HISTORY')
     matches = header[wildcard_key].keys()
     return matches
+
+
+def expr_pyparse(full_expr):
+    """
+    Run the full string evaluation expression through initial parsing.  This should
+    be some combination of AND,ORs using appropriate parenthesis, and the evaluation
+    statement should looks like so: KEYWORD = "value" for strings, KEYWORD = value for
+    integer/float values.  Example of full expression:
+    "(BUNIT = 'UNITLESS' and NAXIS1 = 1014) OR BUNIT='ELECTRONS/S'"
+    Can use lower or upper case for or/and argument, and spaces around operators not
+    required.
+
+    Parameters
+    ----------
+    full_expr : string
+
+    Returns
+    -------
+    list
+        nested list of expression elements, where inner list has
+        [keyword, operator, value]
+
+    """
+
+    and_ = pyp.CaselessLiteral('and')
+    or_ = pyp.CaselessLiteral('or')
+    keyword = pyp.Word(pyp.alphanums+'_'+'-')
+    value = (pyp.Word(pyp.nums + '.') | pyp.quotedString.setParseAction(pyp.removeQuotes))
+    expr = pyp.Word('=<>')
+
+    searchTerm = pyp.Group(keyword + expr + value)
+    searchExpr = pyp.operatorPrecedence(searchTerm,
+                                     [(and_, 2, pyp.opAssoc.LEFT),
+                                      (or_, 2, pyp.opAssoc.LEFT),
+                                     ])
+    # change this to catch exception, this is most likely where parsing
+    # exception will happen from bad user input
+    return searchExpr.parseString(full_expr, parseAll=True).asList()
+
+
+def depth_parse(input_list, header):
+    """Take an input nested list built from pyparsing and deconstruct
+    recursively to evaluate expressions.
+
+    Parameters
+    ----------
+    input_list: nested list
+
+    header: fits header
+        fits header to evaluate expression on
+
+    Returns
+    -------
+    result : boolean
+    """
+
+    bool_dict = {'and': operator.and_, 'or': operator.or_}
+    if isinstance(input_list, list):
+        if len(input_list) is 1:
+            return depth_parse(input_list[0], header)
+        elif (len(input_list) is 3) and (isinstance(input_list[0], list)):
+            bool_func = bool_dict[input_list[1]]
+            result = bool_func(depth_parse(input_list[0], header), depth_parse(input_list[2], header))
+            return result
+        elif (len(input_list) is 3) and (isinstance(input_list[0], string_types)):
+            return eval_keyword_expr(input_list, header)
+        else:
+            # change this to exception
+            print("no deconstruction match found for list: {}".format(input_list))
+    else:
+        # change this to exception
+        print("wrong input type, need list")
 
 
 def to_number(s):
