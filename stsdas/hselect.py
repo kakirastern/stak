@@ -1,5 +1,4 @@
 """ hselect
-flag 1
 algorithm outline:
 translate inputs, get filelist
 
@@ -178,7 +177,7 @@ def eval_keyword_expr(list_expr, header):
 
     operator_dict = {'=': operator.eq, '<': operator.lt, '<=': operator.le, '>': operator.gt, '>=': operator.ge}
 
-    if len(list_expr) is 3:
+    if len(list_expr) == 3:
         check_function = operator_dict[list_expr[1]]
 
         #check for keyword
@@ -186,7 +185,7 @@ def eval_keyword_expr(list_expr, header):
             return False
 
         #now check condition
-        right_side, trash = to_number(list_expr[2])
+        right_side, _ = to_number(list_expr[2])
         return check_function(header[list_expr[0]], right_side)
     else:
         #should add exception catching here
@@ -239,6 +238,7 @@ def expr_pyparse(full_expr):
 
     """
 
+    # Setup "word" patterns
     and_ = pyp.CaselessLiteral('and')
     or_ = pyp.CaselessLiteral('or')
     keyword = pyp.Word(pyp.alphanums+'_'+'-')
@@ -272,14 +272,18 @@ def depth_parse(input_list, header):
     """
 
     bool_dict = {'and': operator.and_, 'or': operator.or_}
+    
     if isinstance(input_list, list):
-        if len(input_list) is 1:
+        # first pass from pyparse output will be single element list
+        if len(input_list) == 1:
             return depth_parse(input_list[0], header)
-        elif (len(input_list) is 3) and (isinstance(input_list[0], list)):
+        # list should have three elements, if inner elements also list, use boolean parsing
+        elif (len(input_list) == 3) and (isinstance(input_list[0], list)):
             bool_func = bool_dict[input_list[1]]
             result = bool_func(depth_parse(input_list[0], header), depth_parse(input_list[2], header))
             return result
-        elif (len(input_list) is 3) and (isinstance(input_list[0], string_types)):
+        # list should have three elements, if inner elements strings, use keyword evaluation
+        elif (len(input_list) == 3) and (isinstance(input_list[0], string_types)):
             return eval_keyword_expr(input_list, header)
         else:
             # change this to exception
