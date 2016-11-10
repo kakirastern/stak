@@ -2,14 +2,26 @@
 tables.fitsio
 =============
 
+Notes
+-----
+
+blah blah cats blah
+
+Contents:
+
+-  `catfits <#catfits>`__
+
+
+
+catfits
+-------
+
+\*\* Please review the `Notes <#notes>`__ section above before running
+any examples in this notebook \*\*
+
 .. code:: python
 
     from astropy.io import fits
-
- ### catfits
-
-.. code:: python
-
     import glob
 
 .. code:: python

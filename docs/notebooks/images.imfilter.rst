@@ -23,13 +23,7 @@ boundaries \* provided built in kernels
 So when possible, we will be using ``astropy.convolution`` functions in
 this notebook.
 
-.. raw:: html
-
-   <h3> Important Note </h3>
-
-.. raw:: html
-
-  
+**Important Note**
 
 You can select from the following boundary rules in
 ``astropy.convolution``: \* none \* fill \* wrap \* extend
@@ -38,86 +32,23 @@ You can select from the following boundary rules in
 ``scipy.ndimage.convolution``: \* reflect \* constant \* nearest \*
 mirror \* wrap
 
-General Imports
-~~~~~~~~~~~~~~~
+Contents:
 
-These imports will be used for a majority of the tasks listed below.
-More specific imports can be found in the task section.
-
-
-
-.. code:: python
-
-    from astropy.io import fits
-    import numpy as np
-    from astropy.convolution import convolve as ap_convolve
-    from scipy.ndimage import convolve as sp_convolve
-
- ### Imports for Plotting Examples
-
-.. code:: python
-
-    import matplotlib.pyplot as plt
-    %matplotlib inline
-
-.. raw:: html
-
-   <center>
-
-.. raw:: html
-
-   <h2>
-
-Convolution Functions
-
-.. raw:: html
-
-   </h2>
-
-.. raw:: html
-
-   </center>
+-  `boxcar <#boxcar>`__
+-  `convolve <#boxcar>`__
+-  `gauss <#convolve>`__
+-  `gradient <#gradient>`__
+-  `laplace <#laplace>`__
+-  `median <#median>`__
+-  `mode <#mode>`__
 
 
 
-convolve
---------
+boxcar
+------
 
-The convolve task allows you to convolve your data array with a kernel
-of your own creation. Here we show a simple example of a rectangular
-kernel applied to a 10 by 10 array using the
-``astropy.convolution.convolve`` function
-
-.. code:: python
-
-    # create test array
-    my_arr = np.random.randint(0,10,(10,10))
-    # setup our custom kernel
-    my_kernel = [[0,1,0],[1,0,1],[0,1,0],[1,0,1],[0,1,0]]
-    # perform convolution
-    result = ap_convolve(my_arr, my_kernel, normalize_kernel=True, boundary='wrap')
-
-.. code:: python
-
-    fig, axes = plt.subplots(nrows=1, ncols=3)
-    a = axes[0].imshow(my_arr,interpolation='none', origin='lower',vmin=0, vmax=10)
-    axes[0].set_title('Before Convolution')
-    a = axes[1].imshow(my_kernel,interpolation='none', origin='lower',vmin=0, vmax=10)
-    axes[1].set_title('Kernel')
-    a = axes[2].imshow(result,interpolation='none', origin='lower',vmin=0, vmax=10)
-    axes[2].set_title('After Convolution')
-    
-    fig.subplots_adjust(right = 0.8,left=0)
-    cbar_ax = fig.add_axes([0.85, 0.15, 0.05, 0.7])
-    fig.colorbar(a, cax=cbar_ax)
-    plt.show()
-
-
-
-.. image:: images.imfilter_files/images.imfilter_12_0.png
-
-
- ### boxcar
+\*\* Please review the `Notes <#notes>`__ section above before running
+any examples in this notebook \*\*
 
 The boxcar convolution does a boxcar smoothing with a given box size,
 and applies this running average to an array. Here we show a 2-D example
@@ -125,6 +56,14 @@ using ``Box2DKernel``, which is convient for square box sizes.
 
 .. code:: python
 
+    from astropy.io import fits
+    import numpy as np
+    from astropy.convolution import convolve as ap_convolve
+    from scipy.ndimage import convolve as sp_convolve
+    
+    import matplotlib.pyplot as plt
+    %matplotlib inline
+    
     from astropy.convolution import Box2DKernel
 
 .. code:: python
@@ -153,13 +92,153 @@ using ``Box2DKernel``, which is convient for square box sizes.
 
 
 
-.. image:: images.imfilter_files/images.imfilter_17_0.png
+.. image:: images.imfilter_files/images.imfilter_9_0.png
 
 
 Add example of rectangular boxcar / ask astropy why they didn't include
 this...
 
- ### gauss
+
+
+convolve
+--------
+
+\*\* Please review the `Notes <#notes>`__ section above before running
+any examples in this notebook \*\*
+
+The convolve task allows you to convolve your data array with a kernel
+of your own creation. Here we show a simple example of a rectangular
+kernel applied to a 10 by 10 array using the
+``astropy.convolution.convolve`` function
+
+.. code:: python
+
+    from astropy.io import fits
+    import numpy as np
+    from astropy.convolution import convolve as ap_convolve
+    from scipy.ndimage import convolve as sp_convolve
+    
+    import matplotlib.pyplot as plt
+    %matplotlib inline
+
+.. code:: python
+
+    # create test array
+    my_arr = np.random.randint(0,10,(10,10))
+    # setup our custom kernel
+    my_kernel = [[0,1,0],[1,0,1],[0,1,0],[1,0,1],[0,1,0]]
+    # perform convolution
+    result = ap_convolve(my_arr, my_kernel, normalize_kernel=True, boundary='wrap')
+
+.. code:: python
+
+    fig, axes = plt.subplots(nrows=1, ncols=3)
+    a = axes[0].imshow(my_arr,interpolation='none', origin='lower',vmin=0, vmax=10)
+    axes[0].set_title('Before Convolution')
+    a = axes[1].imshow(my_kernel,interpolation='none', origin='lower',vmin=0, vmax=10)
+    axes[1].set_title('Kernel')
+    a = axes[2].imshow(result,interpolation='none', origin='lower',vmin=0, vmax=10)
+    axes[2].set_title('After Convolution')
+    
+    fig.subplots_adjust(right = 0.8,left=0)
+    cbar_ax = fig.add_axes([0.85, 0.15, 0.05, 0.7])
+    fig.colorbar(a, cax=cbar_ax)
+    plt.show()
+
+
+
+.. image:: images.imfilter_files/images.imfilter_16_0.png
+
+
+convolve
+--------
+
+\*\* Please review the `Notes <#notes>`__ section above before running
+any examples in this notebook \*\*
+
+Here is an example using masking with ``astropy.convolve``
+
+.. code:: python
+
+    from astropy.io import fits
+    import numpy as np
+    from astropy.convolution import convolve as ap_convolve
+    from scipy.ndimage import convolve as sp_convolve
+    
+    import matplotlib.pyplot as plt
+    %matplotlib inline
+
+.. code:: python
+
+    # create test array
+    my_arr = np.random.random_sample((10,10)) * 10
+    my_arr[5,5] = np.nan
+    my_arr[2,8] = np.nan
+    # setup our custom kernel
+    my_kernel = [[0,1,0],[1,0,1],[0,1,0],[1,0,1],[0,1,0]]
+    # perform convolution
+    result = ap_convolve(my_arr, my_kernel, normalize_kernel=True, boundary='wrap')
+
+.. code:: python
+
+    fig, axes = plt.subplots(nrows=1, ncols=3)
+    a = axes[0].imshow(my_arr,interpolation='none', origin='lower',vmin=0, vmax=10)
+    axes[0].set_title('Before Convolution')
+    a = axes[1].imshow(my_kernel,interpolation='none', origin='lower',vmin=0, vmax=10)
+    axes[1].set_title('Kernel')
+    a = axes[2].imshow(result,interpolation='none', origin='lower',vmin=0, vmax=10)
+    axes[2].set_title('After Convolution')
+    
+    fig.subplots_adjust(right = 0.8,left=0)
+    cbar_ax = fig.add_axes([0.85, 0.15, 0.05, 0.7])
+    fig.colorbar(a, cax=cbar_ax)
+    plt.show()
+
+
+
+.. image:: images.imfilter_files/images.imfilter_21_0.png
+
+
+Here is an example using masking with ``scipy.convolve``
+
+.. code:: python
+
+    # create test array
+    my_arr = np.random.random_sample((10,10)) * 10
+    my_arr[5,5] = np.nan
+    my_arr[2,8] = np.nan
+    # setup our custom kernel
+    my_kernel = np.array([[0,1,0],[1,0,1],[0,1,0],[1,0,1],[0,1,0]]) * (1/7.0)
+    # perform convolution
+    result = sp_convolve(my_arr, my_kernel, mode='wrap')
+
+.. code:: python
+
+    fig, axes = plt.subplots(nrows=1, ncols=3)
+    a = axes[0].imshow(my_arr,interpolation='none', origin='lower',vmin=0, vmax=10)
+    axes[0].set_title('Before Convolution')
+    a = axes[1].imshow(my_kernel,interpolation='none', origin='lower',vmin=0, vmax=10)
+    axes[1].set_title('Kernel')
+    a = axes[2].imshow(result,interpolation='none', origin='lower',vmin=0, vmax=10)
+    axes[2].set_title('After Convolution')
+    
+    fig.subplots_adjust(right = 0.8,left=0)
+    cbar_ax = fig.add_axes([0.85, 0.15, 0.05, 0.7])
+    fig.colorbar(a, cax=cbar_ax)
+    plt.show()
+
+
+
+.. image:: images.imfilter_files/images.imfilter_24_0.png
+
+
+
+
+gauss
+-----
+
+\*\* Please review the `Notes <#notes>`__ section above before running
+any examples in this notebook \*\*
 
 The gaussian kernel convolution applies a gaussian function convolution
 to your data array. The ``Gaussian2DKernel`` size is defined slightly
@@ -168,6 +247,14 @@ http://docs.astropy.org/en/stable/api/astropy.convolution.Gaussian2DKernel.html#
 
 .. code:: python
 
+    from astropy.io import fits
+    import numpy as np
+    from astropy.convolution import convolve as ap_convolve
+    from scipy.ndimage import convolve as sp_convolve
+    
+    import matplotlib.pyplot as plt
+    %matplotlib inline
+    
     from astropy.convolution import Gaussian2DKernel
 
 .. code:: python
@@ -199,7 +286,7 @@ http://docs.astropy.org/en/stable/api/astropy.convolution.Gaussian2DKernel.html#
 
 
 
-.. image:: images.imfilter_files/images.imfilter_23_0.png
+.. image:: images.imfilter_files/images.imfilter_30_0.png
 
 
 .. code:: python
@@ -217,64 +304,27 @@ http://docs.astropy.org/en/stable/api/astropy.convolution.Gaussian2DKernel.html#
 
 
 
-.. image:: images.imfilter_files/images.imfilter_24_0.png
+.. image:: images.imfilter_files/images.imfilter_31_0.png
 
 
- ### laplace
 
-The laplace task runs a image convolution using a laplacian filter with
-a subset of footprints. For the ``scipy.ndimage.filter.laplace``
-function we will be using, you can feed any footprint in as an array to
-create your kernel.
 
-.. code:: python
+gradient
+--------
 
-    from scipy.ndimage import laplace
+\*\* Please review the `Notes <#notes>`__ section above before running
+any examples in this notebook \*\*
 
 .. code:: python
 
-    # create test array
-    my_arr = np.random.randint(0,10,(10,10))
-    # setup our laplace kernel with a target footprint (diagonals in IRAF)
-    footprint = np.array([[0, 1, 0], [1, 1, 1], [0, 1, 0]])
-    laplace_kernel = laplace(footprint)
-    # perform scipy convolution
-    result = sp_convolve(my_arr, laplace_kernel)
-
-.. code:: python
-
-    plt.imshow(laplace_kernel, interpolation='none', origin='lower')
-    plt.title('Kernel')
-    plt.colorbar()
-    plt.show()
-
-
-
-.. image:: images.imfilter_files/images.imfilter_29_0.png
-
-
-.. code:: python
-
-    fig, axes = plt.subplots(nrows=1, ncols=2)
-    a = axes[0].imshow(my_arr,interpolation='none', origin='lower',vmin=-40, vmax=40)
-    axes[0].set_title('Before Convolution')
-    a = axes[1].imshow(result,interpolation='none', origin='lower',vmin=-40, vmax=40)
-    axes[1].set_title('After Convolution')
+    from astropy.io import fits
+    import numpy as np
+    from astropy.convolution import convolve as ap_convolve
+    from scipy.ndimage import convolve as sp_convolve
     
-    fig.subplots_adjust(right = 0.8,left=0)
-    cbar_ax = fig.add_axes([0.85, 0.15, 0.05, 0.7])
-    fig.colorbar(a, cax=cbar_ax)
-    plt.show()
-
-
-
-.. image:: images.imfilter_files/images.imfilter_30_0.png
-
-
- ### gradient
-
-.. code:: python
-
+    import matplotlib.pyplot as plt
+    %matplotlib inline
+    
     from scipy.ndimage.filters import generic_gradient_magnitude
     from scipy.misc import derivative
     from scipy import exp2
@@ -315,46 +365,60 @@ create your kernel.
     TypeError: f() takes exactly 1 argument (5 given)
 
 
-.. raw:: html
 
-   <center>
 
-.. raw:: html
+laplace
+-------
 
-   <h2>
+\*\* Please review the `Notes <#notes>`__ section above before running
+any examples in this notebook \*\*
 
-Convolution Function With Masking
+The laplace task runs a image convolution using a laplacian filter with
+a subset of footprints. For the ``scipy.ndimage.filter.laplace``
+function we will be using, you can feed any footprint in as an array to
+create your kernel.
 
-.. raw:: html
+.. code:: python
 
-   </h2>
-
-.. raw:: html
-
-   </center>
-
-Here is an example using masking with ``astropy.convolve``
+    from astropy.io import fits
+    import numpy as np
+    from astropy.convolution import convolve as ap_convolve
+    from scipy.ndimage import convolve as sp_convolve
+    
+    import matplotlib.pyplot as plt
+    %matplotlib inline
+    
+    from scipy.ndimage import laplace
 
 .. code:: python
 
     # create test array
-    my_arr = np.random.random_sample((10,10)) * 10
-    my_arr[5,5] = np.nan
-    my_arr[2,8] = np.nan
-    # setup our custom kernel
-    my_kernel = [[0,1,0],[1,0,1],[0,1,0],[1,0,1],[0,1,0]]
-    # perform convolution
-    result = ap_convolve(my_arr, my_kernel, normalize_kernel=True, boundary='wrap')
+    my_arr = np.random.randint(0,10,(10,10))
+    # setup our laplace kernel with a target footprint (diagonals in IRAF)
+    footprint = np.array([[0, 1, 0], [1, 1, 1], [0, 1, 0]])
+    laplace_kernel = laplace(footprint)
+    # perform scipy convolution
+    result = sp_convolve(my_arr, laplace_kernel)
 
 .. code:: python
 
-    fig, axes = plt.subplots(nrows=1, ncols=3)
-    a = axes[0].imshow(my_arr,interpolation='none', origin='lower',vmin=0, vmax=10)
+    plt.imshow(laplace_kernel, interpolation='none', origin='lower')
+    plt.title('Kernel')
+    plt.colorbar()
+    plt.show()
+
+
+
+.. image:: images.imfilter_files/images.imfilter_42_0.png
+
+
+.. code:: python
+
+    fig, axes = plt.subplots(nrows=1, ncols=2)
+    a = axes[0].imshow(my_arr,interpolation='none', origin='lower',vmin=-40, vmax=40)
     axes[0].set_title('Before Convolution')
-    a = axes[1].imshow(my_kernel,interpolation='none', origin='lower',vmin=0, vmax=10)
-    axes[1].set_title('Kernel')
-    a = axes[2].imshow(result,interpolation='none', origin='lower',vmin=0, vmax=10)
-    axes[2].set_title('After Convolution')
+    a = axes[1].imshow(result,interpolation='none', origin='lower',vmin=-40, vmax=40)
+    axes[1].set_title('After Convolution')
     
     fig.subplots_adjust(right = 0.8,left=0)
     cbar_ax = fig.add_axes([0.85, 0.15, 0.05, 0.7])
@@ -363,67 +427,30 @@ Here is an example using masking with ``astropy.convolve``
 
 
 
-.. image:: images.imfilter_files/images.imfilter_37_0.png
-
-
-Here is an example using masking with ``scipy.convolve``
-
-.. code:: python
-
-    # create test array
-    my_arr = np.random.random_sample((10,10)) * 10
-    my_arr[5,5] = np.nan
-    my_arr[2,8] = np.nan
-    # setup our custom kernel
-    my_kernel = np.array([[0,1,0],[1,0,1],[0,1,0],[1,0,1],[0,1,0]]) * (1/7.0)
-    # perform convolution
-    result = sp_convolve(my_arr, my_kernel, mode='wrap')
-
-.. code:: python
-
-    fig, axes = plt.subplots(nrows=1, ncols=3)
-    a = axes[0].imshow(my_arr,interpolation='none', origin='lower',vmin=0, vmax=10)
-    axes[0].set_title('Before Convolution')
-    a = axes[1].imshow(my_kernel,interpolation='none', origin='lower',vmin=0, vmax=10)
-    axes[1].set_title('Kernel')
-    a = axes[2].imshow(result,interpolation='none', origin='lower',vmin=0, vmax=10)
-    axes[2].set_title('After Convolution')
-    
-    fig.subplots_adjust(right = 0.8,left=0)
-    cbar_ax = fig.add_axes([0.85, 0.15, 0.05, 0.7])
-    fig.colorbar(a, cax=cbar_ax)
-    plt.show()
+.. image:: images.imfilter_files/images.imfilter_43_0.png
 
 
 
-.. image:: images.imfilter_files/images.imfilter_40_0.png
 
+median / rmedian
+----------------
 
-.. raw:: html
-
-   <center>
-
-.. raw:: html
-
-   <h2>
-
-Filter Functions
-
-.. raw:: html
-
-   </h2>
-
-.. raw:: html
-
-   </center>
-
- ### median / rmedian
+\*\* Please review the `Notes <#notes>`__ section above before running
+any examples in this notebook \*\*
 
 Apply a median filter to your data array. We will use the
 ``scipy.ndimage.filters.median_filter`` function.
 
 .. code:: python
 
+    from astropy.io import fits
+    import numpy as np
+    from astropy.convolution import convolve as ap_convolve
+    from scipy.ndimage import convolve as sp_convolve
+    
+    import matplotlib.pyplot as plt
+    %matplotlib inline
+    
     from scipy.ndimage.filters import median_filter
 
 .. code:: python
@@ -448,7 +475,7 @@ Apply a median filter to your data array. We will use the
 
 
 
-.. image:: images.imfilter_files/images.imfilter_46_0.png
+.. image:: images.imfilter_files/images.imfilter_49_0.png
 
 
 For a ring median filter we can supply a more specific footprint to the
@@ -491,28 +518,16 @@ the ``astroimtools`` library
 
 
 
-.. image:: images.imfilter_files/images.imfilter_50_0.png
+.. image:: images.imfilter_files/images.imfilter_53_0.png
 
 
-.. raw:: html
 
-   <center>
 
-.. raw:: html
+mode / rmode
+------------
 
-   <h2>
-
-Creating Your Own Filter Functions
-
-.. raw:: html
-
-   </h2>
-
-.. raw:: html
-
-   </center>
-
- ### mode / rmode
+\*\* Please review the `Notes <#notes>`__ section above before running
+any examples in this notebook \*\*
 
 The mode calculation equation used in the mode and rmode IRAF tasks
 (3.0\*median - 2.0\*mean) can be recreated using the
@@ -521,6 +536,14 @@ approximation\*\*
 
 .. code:: python
 
+    from astropy.io import fits
+    import numpy as np
+    from astropy.convolution import convolve as ap_convolve
+    from scipy.ndimage import convolve as sp_convolve
+    
+    import matplotlib.pyplot as plt
+    %matplotlib inline
+    
     from scipy.ndimage import generic_filter
     from astroimtools import circular_annulus_footprint
 
@@ -554,7 +577,7 @@ For a box footprint:
 
 
 
-.. image:: images.imfilter_files/images.imfilter_58_0.png
+.. image:: images.imfilter_files/images.imfilter_61_0.png
 
 
 For a ring footprint:
@@ -583,7 +606,7 @@ For a ring footprint:
 
 
 
-.. image:: images.imfilter_files/images.imfilter_61_0.png
+.. image:: images.imfilter_files/images.imfilter_64_0.png
 
 
  ## Not Replacing

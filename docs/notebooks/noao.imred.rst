@@ -2,23 +2,22 @@
 noao.imred
 ==========
 
+Notes
+-----
 
+blah blah cats blah blah
 
-General Imports
-~~~~~~~~~~~~~~~
+Contents:
 
-These imports will be used for a majority of the tasks listed below.
-More specific imports can be found in the task section.
-
-.. code:: python
-
-    from astropy.io import fits
-    import numpy as np
+-  `crutil.crgrow <#crgrow>`__
 
 
 
 crutil.crgrow
 -------------
+
+**Please review the `Notes <#notes>`__ section above before running any
+examples in this notebook**
 
 The crgrow replacement uses the ``skimage.morphology`` package to grow
 the values in any numpy array. The dilation task is a wrapper around
@@ -27,8 +26,11 @@ the values in any numpy array. The dilation task is a wrapper around
 
 .. code:: python
 
+    from astropy.io import fits
     from skimage.morphology import disk,dilation
-    
+
+.. code:: python
+
     # Change this value to your desired data file
     test_data = '/eng/ssb/iraf_transition/test_data/id0k16pdq_blv_tmp.fits'
     

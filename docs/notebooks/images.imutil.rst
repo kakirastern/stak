@@ -1,21 +1,221 @@
 
-images.imtuil
+images.imutil
 =============
 
- ## General Imports These imports will be used for a majority of the
-tasks listed below. More specific imports can be found in the task
-section.
+Notes
+-----
+
+General fits image tools
+
+Contents:
+
+-  `imcopy <#imcopy>`__
+-  `imheader <#imheader>`__
+-  `hselect <#hselect>`__
+-  `hedit <#hedit>`__
+-  `listpixels <#listpixels>`__
+-  `chpixtype <#chpixtype>`__
+-  `imstatistics <#imstatistics>`__
+-  `imarith/imdivide <#imarith>`__
+-  `imfunction/imexpr <#imfunction>`__
+-  `imhistogram <#imhistogram>`__
+-  `imreplace <#imreplace>`__
+-  `imsum <#imsum>`__
+-  `imstack <#imstack>`__
+-  `imslice <#imslice>`__
+
+
+
+chpixtype
+---------
+
+\*\* Please review the `Notes <#notes>`__ section above before running
+any examples in this notebook \*\*
+
+Chpixtype is a task that allows you to change the pixel type of a fits
+image. There is built in functionality in ``astropy.io.fits`` to preform
+this task with the ``scale`` method. Below you will find a table that
+translates the chpixtype newpixtype options into their equivalent
+``numpy``/``astropy`` type
+(http://docs.scipy.org/doc/numpy/user/basics.types.html).
+
+**Type Conversions**
+
++--------------+----------------------+
+| Chpixtype    | Numpy/Astropy Type   |
++==============+======================+
+| ``ushort``   | ``uint16``           |
++--------------+----------------------+
+| ``short``    | ``int16``            |
++--------------+----------------------+
+| ``int``      | ``int32``            |
++--------------+----------------------+
+| ``long``     | ``int64``            |
++--------------+----------------------+
+| ``real``     | ``float32``          |
++--------------+----------------------+
+| ``double``   | ``float64``          |
++--------------+----------------------+
 
 .. code:: python
 
+    # general imports
     from astropy.io import fits
-    import numpy as np
 
- ## imcopy
+.. code:: python
+
+    # Change this value to your desired data file, here were creating a filename
+    # for our new changed data
+    orig_data = '/eng/ssb/iraf_transition/test_data/iczgs3ygq_flt.fits'
+    new_data = '/eng/ssb/iraf_transition/test_data/iczgs3ygq_newdtype_flt.fits'
+    
+    # Read in your fits file
+    hdu = fits.open(orig_data)
+    
+    # Edit the datatype
+    hdu[1].scale(type='int32')
+    
+    # Save changed hdu object to new file
+    # The clobber argument tells the writeto method to overwrite if file already exists
+    hdu.writeto(new_data, clobber=True)
+    hdu.close()
+
+
+
+hedit
+-----
+
+\*\* Please review the `Notes <#notes>`__ section above before running
+any examples in this notebook \*\*
+
+The hedit task allows users to edit an image header. This functioanlity
+is covered in ``astropy.io.fits``. Take note that to make changes to a
+fits file, you must use the ``mode='update'`` keyword in the
+``fits.open`` call. Below you'll find examples of editing a keyword if
+it does/doesn't exist, and how to delete keywords from the header.
+
+.. code:: python
+
+    # general imports
+    from astropy.io import fits
+
+.. code:: python
+
+    # Change this value to your desired data file
+    test_data = '/eng/ssb/iraf_transition/test_data/iczgs3ygq_flt.fits'
+    
+    # Open fits file, include the mode='update' keyword
+    hdu = fits.open(test_data, mode='update')
+    
+    # Simple header change, will add keyword if it doesn't not exist
+    hdu[0].header['MYKEY1'] = 'Editing this keyword'
+    
+    # Only add keyword if it does not already exist:
+    if 'MYKEY2' not in hdu[0].header:
+        hdu[0].header['MYKEY2'] = 'Also editing this'
+    
+    # To delete keywords, first check if they exist:
+    if 'MYKEY2' in hdu[0].header:
+        del hdu[0].header['MYKEY2']
+        
+    # Close fits file, this will save your changes
+    hdu.close()
+
+
+
+hselect
+-------
+
+\*\* Please review the `Notes <#notes>`__ section above before running
+any examples in this notebook \*\*
+
+hselect is used to pull out specific header keywords. You can also use
+specific keyword values to filter files. We will be using the ?????
+package ``Hselect`` class.
+
+.. code:: python
+
+    "In progress..."
+
+
+
+
+.. parsed-literal::
+
+    'In progress...'
+
+
+
+
+
+imarith / imdivide
+------------------
+
+\*\* Please review the `Notes <#notes>`__ section above before running
+any examples in this notebook \*\*
+
+Imarith and imdivide both provide functionality to apply basic operators
+to whole image arrays. This task can be achieved with basic
+``astropy.io.fits`` functionality along with ``numpy`` array
+functionality.
+
+The basic operands (``+``,\ ``-``,\ ``/``,\ ``*``) can all be used with
+an assignment operator in python (``+=``,\ ``-=``,\ ``/=``,\ ``*=``).
+See http://www.tutorialspoint.com/python/python\_basic\_operators.htm
+for more details
+
+.. code:: python
+
+    # general imports
+    from astropy.io import fits
+
+.. code:: python
+
+    # Basic operands (+,-,/,*)
+    # Change these values to your desired data files
+    test_data1 = '/eng/ssb/iraf_transition/test_data/iczgs3ygq_flt.fits'
+    test_data2 = '/eng/ssb/iraf_transition/test_data/iczgs3y5q_flt.fits'
+    output_data = '/eng/ssb/iraf_transition/test_data/imarith_out.fits'
+    
+    # Open fits file
+    hdu1 = fits.open(test_data1)
+    hdu2 = fits.open(test_data2)
+    
+    # Here we add hdu2-ext1 to hdu1-ext1 by using the shortcute += operator
+    hdu1[1].data += hdu2[1].data
+    
+    # If you are dividing and need to avoid zeros in the image use indexing
+    indx_zeros = [hdu2[4].data == 0]
+    indx_nonzeros = [hdu2[4].data != 0]
+    # Set this value as you would the divzero parameter in imarith
+    set_zeros = 999.9
+    hdu1[4].data[indx_nonzeros] /= hdu2[4].data[indx_nonzeros]
+    hdu1[4].data[indx_zeros] = 999.9
+    
+    # Save your new file
+    # The clobber argument tells the writeto method to overwrite if file already exists
+    hdu1.writeto(output_data, clobber=True)
+    
+    # Close hdu files
+    hdu1.close()
+    hdu2.close()
+
+
+
+imcopy
+------
+
+\*\* Please review the `Notes <#notes>`__ section above before running
+any examples in this notebook \*\*
 
 Imcopy allows users to copy a fits image to a new file. We can
 accomplish this using ``astropy.io.fits`` by saving our fits file to a
 new filename.
+
+.. code:: python
+
+    # general imports
+    from astropy.io import fits
 
 .. code:: python
 
@@ -28,7 +228,138 @@ new filename.
     hdu.writeto(output_data, clobber=True)
     hdu.close()
 
- ## imheader
+
+
+imfunction / imexpr
+-------------------
+
+\*\* Please review the `Notes <#notes>`__ section above before running
+any examples in this notebook \*\*
+
+Imfunction will apply a function to the image pixel values in an image
+array. Imexpr gives you similiar functionality with the added capability
+to combine different images using a user created expression. We can
+accomplish this using the built in funcitonality of the ``numpy``
+library (http://docs.scipy.org/doc/numpy/reference/routines.math.html)
+
+If there is a particular function you would like to apply to your image
+array that you cannot find in the ``numpy`` library you can use the
+``np.vectorize`` function, which can make any python function apply to
+each element of your array. But keep in mind that ``np.vectorize`` is
+esentially looping over the array, and may not be the most efficient
+method
+(http://docs.scipy.org/doc/numpy/reference/generated/numpy.vectorize.html).
+
+Example using exsisting numpy function:
+
+.. code:: python
+
+    # general imports
+    from astropy.io import fits
+    import numpy as np
+
+.. code:: python
+
+    # Change these values to your desired data files
+    test_data = '/eng/ssb/iraf_transition/test_data/iczgs3ygq_flt.fits'
+    output_data = '/eng/ssb/iraf_transition/test_data/imfunction_out.fits'
+    
+    # Here we use the cosine function as an example
+    hdu = fits.open(test_data)
+    sci = hdu[1].data
+    
+    # When you call your new function, make sure to reassign the array to
+    # the new values if the original function is not changing values in place
+    hdu[1].data = np.cos(hdu[1].data)
+    
+    # Now save out to a new file, and close the original file, changes will
+    # not be applied to the oiginal fits file.
+    hdu.writeto(output_data)
+    hdu.close()
+
+
+::
+
+
+    ---------------------------------------------------------------------------
+
+    IOError                                   Traceback (most recent call last)
+
+    <ipython-input-22-5b209c2fe4f8> in <module>()
+         13 # Now save out to a new file, and close the original file, changes will
+         14 # not be applied to the oiginal fits file.
+    ---> 15 hdu.writeto(output_data)
+         16 hdu.close()
+
+
+    /Users/ogaz/miniconda2/envs/irafdev/lib/python2.7/site-packages/astropy/io/fits/hdu/hdulist.pyc in writeto(self, fileobj, output_verify, clobber, checksum)
+        684         # file object that's open to write only, or in append/update modes
+        685         # but only if the file doesn't exist.
+    --> 686         fileobj = _File(fileobj, mode='ostream', clobber=clobber)
+        687         hdulist = self.fromfile(fileobj)
+        688 
+
+
+    /Users/ogaz/miniconda2/envs/irafdev/lib/python2.7/site-packages/astropy/io/fits/file.pyc in __init__(self, fileobj, mode, memmap, clobber, cache)
+        148             self._open_fileobj(fileobj, mode, clobber)
+        149         elif isinstance(fileobj, string_types):
+    --> 150             self._open_filename(fileobj, mode, clobber)
+        151         else:
+        152             self._open_filelike(fileobj, mode, clobber)
+
+
+    /Users/ogaz/miniconda2/envs/irafdev/lib/python2.7/site-packages/astropy/io/fits/file.pyc in _open_filename(self, filename, mode, clobber)
+        474 
+        475         if mode == 'ostream':
+    --> 476             self._overwrite_existing(clobber, None, True)
+        477 
+        478         if os.path.exists(self.name):
+
+
+    /Users/ogaz/miniconda2/envs/irafdev/lib/python2.7/site-packages/astropy/io/fits/file.pyc in _overwrite_existing(self, clobber, fileobj, closed)
+        393                     os.remove(self.name)
+        394             else:
+    --> 395                 raise IOError("File %r already exists." % self.name)
+        396 
+        397     def _open_fileobj(self, fileobj, mode, clobber):
+
+
+    IOError: File '/eng/ssb/iraf_transition/test_data/imfunction_out.fits' already exists.
+
+
+Example using user defined function and ``np.vectorize``:
+
+.. code:: python
+
+    # Change these values to your desired data files
+    test_data = '/eng/ssb/iraf_transition/test_data/iczgs3ygq_flt.fits'
+    output_data = '/eng/ssb/iraf_transition/test_data/imfunction2_out.fits'
+    
+    # Here we use the following custom function as an example
+    def my_func(x):
+        return (x**2)+(x**3)
+    
+    # Now we open our file, and vectorize our function
+    hdu = fits.open(test_data)
+    sci = hdu[1].data
+    vcos = np.vectorize(my_func)
+    
+    # When you call your new function, make sure to reassign the array to
+    # the new values if the original function is not changing values in place
+    hdu[1].data = vcos(hdu[1].data)
+    
+    # Now save out to a new file, and close the original file, changes will
+    # not be applied to the oiginal fits file.
+    hdu.writeto(output_data)
+    hdu.close()
+
+
+
+imheader
+--------
+
+\*\* Please review the `Notes <#notes>`__ section above before running
+any examples in this notebook \*\*
 
 The imheader task allows the user to list header parameters for a list
 of images. Here we can use the ``astropy`` convenience function,
@@ -36,6 +367,10 @@ of images. Here we can use the ``astropy`` convenience function,
 
 .. code:: python
 
+    # general imports
+    from astropy.io import fits
+    
+    # specific imports
     import glob
 
 .. code:: python
@@ -473,242 +808,13 @@ of images. Here we can use the ``astropy`` convenience function,
     MDRIZSKY=   0.7757664823972165 / Sky value computed by AstroDrizzle             
 
 
- ## hselect
-
-hselect is used to pull out specific header keywords. You can also use
-specific keyword values to filter files. We will be using the ?????
-package ``Hselect`` class.
-
-.. code:: python
-
-    "In progress..."
 
 
+imhistogram
+-----------
 
-
-.. parsed-literal::
-
-    'In progress...'
-
-
-
- ## hedit
-
-The hedit task allows users to edit an image header. This functioanlity
-is covered in ``astropy.io.fits``. Take note that to make changes to a
-fits file, you must use the ``mode='update'`` keyword in the
-``fits.open`` call. Below you'll find examples of editing a keyword if
-it does/doesn't exist, and how to delete keywords from the header.
-
-.. code:: python
-
-    # Change this value to your desired data file
-    test_data = '/eng/ssb/iraf_transition/test_data/iczgs3ygq_flt.fits'
-    
-    # Open fits file, include the mode='update' keyword
-    hdu = fits.open(test_data, mode='update')
-    
-    # Simple header change, will add keyword if it doesn't not exist
-    hdu[0].header['MYKEY1'] = 'Editing this keyword'
-    
-    # Only add keyword if it does not already exist:
-    if 'MYKEY2' not in hdu[0].header:
-        hdu[0].header['MYKEY2'] = 'Also editing this'
-    
-    # To delete keywords, first check if they exist:
-    if 'MYKEY2' in hdu[0].header:
-        del hdu[0].header['MYKEY2']
-        
-    # Close fits file, this will save your changes
-    hdu.close()
-
- ## listpixels
-
-**I know of at least one person who still uses this quite a bit, I think
-we should add this as a command line function**
-
- ## chpixtype
-
-Chpixtype is a task that allows you to change the pixel type of a fits
-image. There is built in functionality in ``astropy.io.fits`` to preform
-this task with the ``scale`` method. Below you will find a table that
-translates the chpixtype newpixtype options into their equivalent
-``numpy``/``astropy`` type
-(http://docs.scipy.org/doc/numpy/user/basics.types.html).
-
-**Type Conversions**
-
-+--------------+----------------------+
-| Chpixtype    | Numpy/Astropy Type   |
-+==============+======================+
-| ``ushort``   | ``uint16``           |
-+--------------+----------------------+
-| ``short``    | ``int16``            |
-+--------------+----------------------+
-| ``int``      | ``int32``            |
-+--------------+----------------------+
-| ``long``     | ``int64``            |
-+--------------+----------------------+
-| ``real``     | ``float32``          |
-+--------------+----------------------+
-| ``double``   | ``float64``          |
-+--------------+----------------------+
-
-.. code:: python
-
-    # Change this value to your desired data file, here were creating a filename
-    # for our new changed data
-    orig_data = '/eng/ssb/iraf_transition/test_data/iczgs3ygq_flt.fits'
-    new_data = '/eng/ssb/iraf_transition/test_data/iczgs3ygq_newdtype_flt.fits'
-    
-    # Read in your fits file
-    hdu = fits.open(orig_data)
-    
-    # Edit the datatype
-    hdu[1].scale(type='int32')
-    
-    # Save changed hdu object to new file
-    # The clobber argument tells the writeto method to overwrite if file already exists
-    hdu.writeto(new_data, clobber=True)
-    hdu.close()
-
- ## imstatistics
-
-**another good candidate for a command line wrapper**
-
-We will use the ``astropy.stats.sigma_clipped_stats`` function here,
-which has some wider capabilites then the imstatistics function. Please
-see the ``stats`` package documentation for details on the advanced
-usage
-(http://docs.astropy.org/en/stable/api/astropy.stats.sigma\_clipped\_stats.html).
-
-.. code:: python
-
-    from astropy import stats
-
-.. code:: python
-
-    # Change these values to your desired data files
-    test_data = '/eng/ssb/iraf_transition/test_data/iczgs3ygq_flt.fits'
-    sci1 = fits.getdata(test_data,ext=1)
-    
-    # The sigma_clipped_stats function returns the mean, median, and stddev respectively
-    output = stats.sigma_clipped_stats(sci1,sigma=2.0,iters=3)
-    print output
-
-
-.. parsed-literal::
-
-    (0.82121155347072006, 0.81694626808166504, 0.058198063937460652)
-
-
- ## imarith / imdivide
-
-Imarith and imdivide both provide functionality to apply basic operators
-to whole image arrays. This task can be achieved with basic
-``astropy.io.fits`` functionality along with ``numpy`` array
-functionality.
-
-The basic operands (``+``,\ ``-``,\ ``/``,\ ``*``) can all be used with
-an assignment operator in python (``+=``,\ ``-=``,\ ``/=``,\ ``*=``).
-See http://www.tutorialspoint.com/python/python\_basic\_operators.htm
-for more details
-
-.. code:: python
-
-    # Basic operands (+,-,/,*)
-    # Change these values to your desired data files
-    test_data1 = '/eng/ssb/iraf_transition/test_data/iczgs3ygq_flt.fits'
-    test_data2 = '/eng/ssb/iraf_transition/test_data/iczgs3y5q_flt.fits'
-    output_data = '/eng/ssb/iraf_transition/test_data/imarith_out.fits'
-    
-    # Open fits file
-    hdu1 = fits.open(test_data1)
-    hdu2 = fits.open(test_data2)
-    
-    # Here we add hdu2-ext1 to hdu1-ext1 by using the shortcute += operator
-    hdu1[1].data += hdu2[1].data
-    
-    # If you are dividing and need to avoid zeros in the image use indexing
-    indx_zeros = [hdu2[4].data == 0]
-    indx_nonzeros = [hdu2[4].data != 0]
-    # Set this value as you would the divzero parameter in imarith
-    set_zeros = 999.9
-    hdu1[4].data[indx_nonzeros] /= hdu2[4].data[indx_nonzeros]
-    hdu1[4].data[indx_zeros] = 999.9
-    
-    # Save your new file
-    # The clobber argument tells the writeto method to overwrite if file already exists
-    hdu1.writeto(output_data, clobber=True)
-    
-    # Close hdu files
-    hdu1.close()
-    hdu2.close()
-
- ## imfunction / imexpr
-
-Imfunction will apply a function to the image pixel values in an image
-array. Imexpr gives you similiar functionality with the added capability
-to combine different images using a user created expression. We can
-accomplish this using the built in funcitonality of the ``numpy``
-library (http://docs.scipy.org/doc/numpy/reference/routines.math.html)
-
-If there is a particular function you would like to apply to your image
-array that you cannot find in the ``numpy`` library you can use the
-``np.vectorize`` function, which can make any python function apply to
-each element of your array. But keep in mind that ``np.vectorize`` is
-esentially looping over the array, and may not be the most efficient
-method
-(http://docs.scipy.org/doc/numpy/reference/generated/numpy.vectorize.html).
-
-Example using exsisting numpy function:
-
-.. code:: python
-
-    # Change these values to your desired data files
-    test_data = '/eng/ssb/iraf_transition/test_data/iczgs3ygq_flt.fits'
-    output_data = '/eng/ssb/iraf_transition/test_data/imfunction_out.fits'
-    
-    # Here we use the cosine function as an example
-    hdu = fits.open(test_data)
-    sci = hdu[1].data
-    
-    # When you call your new function, make sure to reassign the array to
-    # the new values if the original function is not changing values in place
-    hdu[1].data = np.cos(hdu[1].data)
-    
-    # Now save out to a new file, and close the original file, changes will
-    # not be applied to the oiginal fits file.
-    hdu.writeto(output_data)
-    hdu.close()
-
-Example using user defined function and ``np.vectorize``:
-
-.. code:: python
-
-    # Change these values to your desired data files
-    test_data = '/eng/ssb/iraf_transition/test_data/iczgs3ygq_flt.fits'
-    output_data = '/eng/ssb/iraf_transition/test_data/imfunction2_out.fits'
-    
-    # Here we use the following custom function as an example
-    def my_func(x):
-        return (x**2)+(x**3)
-    
-    # Now we open our file, and vectorize our function
-    hdu = fits.open(test_data)
-    sci = hdu[1].data
-    vcos = np.vectorize(my_func)
-    
-    # When you call your new function, make sure to reassign the array to
-    # the new values if the original function is not changing values in place
-    hdu[1].data = vcos(hdu[1].data)
-    
-    # Now save out to a new file, and close the original file, changes will
-    # not be applied to the oiginal fits file.
-    hdu.writeto(output_data)
-    hdu.close()
-
- ## imhistogram
+\*\* Please review the `Notes <#notes>`__ section above before running
+any examples in this notebook \*\*
 
 Imhistogram will plot a customized histogram of the provided image data.
 To make a histogram in Python we are going to use matplotlibs ``hist``
@@ -718,10 +824,15 @@ histogram type, scaling, bin sizes, and more
 
 .. code:: python
 
+    # general imports
+    from astropy.io import fits
+    import numpy as np
+    
+    # specific imports
     import matplotlib.pyplot as plt
     
     # Let's also make our plots show up in this notebook window
-    %matplotlib inline  
+    %matplotlib inline
 
 .. code:: python
 
@@ -739,15 +850,27 @@ histogram type, scaling, bin sizes, and more
 
 
 
-.. image:: images.imutil_files/images.imutil_38_0.png
+.. image:: images.imutil_files/images.imutil_44_0.png
 
 
- ## imreplace
+
+
+imreplace
+---------
+
+\*\* Please review the `Notes <#notes>`__ section above before running
+any examples in this notebook \*\*
 
 We can use simple ``numpy`` array manipulation to replicate imreplace.
 For details on how to grow the boolean array for replacement see crgrow,
 or the ``skimage.dilation`` documentation
 (http://scikit-image.org/docs/0.12.x/api/skimage.morphology.html?highlight=dilation#skimage.morphology.dilation).
+
+.. code:: python
+
+    # general imports
+    from astropy.io import fits
+    import numpy as np
 
 .. code:: python
 
@@ -766,7 +889,71 @@ or the ``skimage.dilation`` documentation
     # We are not saving changes here
     hdu.close()
 
- ## imsum
+
+
+imslice
+-------
+
+\*\* Please review the `Notes <#notes>`__ section above before running
+any examples in this notebook \*\*
+
+**Need a datacube image, also, see below note**
+
+
+
+imstack
+-------
+
+\*\* Please review the `Notes <#notes>`__ section above before running
+any examples in this notebook \*\*
+
+
+
+imstatistics
+------------
+
+\*\* Please review the `Notes <#notes>`__ section above before running
+any examples in this notebook \*\*
+
+**another good candidate for a command line wrapper**
+
+We will use the ``astropy.stats.sigma_clipped_stats`` function here,
+which has some wider capabilites then the imstatistics function. Please
+see the ``stats`` package documentation for details on the advanced
+usage
+(http://docs.astropy.org/en/stable/api/astropy.stats.sigma\_clipped\_stats.html).
+
+.. code:: python
+
+    # general imports
+    from astropy.io import fits
+    
+    # specific imports
+    from astropy import stats
+
+.. code:: python
+
+    # Change these values to your desired data files
+    test_data = '/eng/ssb/iraf_transition/test_data/iczgs3ygq_flt.fits'
+    sci1 = fits.getdata(test_data,ext=1)
+    
+    # The sigma_clipped_stats function returns the mean, median, and stddev respectively
+    output = stats.sigma_clipped_stats(sci1,sigma=2.0,iters=3)
+    print output
+
+
+.. parsed-literal::
+
+    (0.82121155347072006, 0.81694626808166504, 0.058198063937460652)
+
+
+
+
+imsum
+-----
+
+\*\* Please review the `Notes <#notes>`__ section above before running
+any examples in this notebook \*\*
 
 We will be using the ``ccdproc`` ``Combiner`` class here. Keep in mind
 that the original fits header is not retained in the ``CCDData`` object.
@@ -775,8 +962,12 @@ Please see the documentation for more details
 
 .. code:: python
 
-    from ccdproc import CCDData, Combiner
+    # general imports
+    from astropy.io import fits
     from astropy import units
+    
+    # specific imports
+    from ccdproc import CCDData, Combiner
 
 .. code:: python
 
@@ -821,16 +1012,21 @@ Please see the documentation for more details
        22.66858006]]
 
 
- ## imstack
 
-**This might benefit from a function, it's using some logic for the WCS
-solutions**
 
- ## imslice
+listpixels
+----------
 
-**Need a datacube image, also, see below note**
+\*\* Please review the `Notes <#notes>`__ section above before running
+any examples in this notebook \*\*
 
- ## Not Replacing
+**I know of at least one person who still uses this quite a bit, I think
+we should add this as a command line function**
+
+
+
+Not Replacing
+-------------
 
 -  imrename
 -  imdelete
