@@ -2,7 +2,7 @@
 Stsdas package
 ****************
 
-This is the documentation for the affiliated package.
+A package containing Python astronomy tools.
 
 Reference/API
 =============
