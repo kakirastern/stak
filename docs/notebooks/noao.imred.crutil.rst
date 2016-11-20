@@ -1,15 +1,14 @@
 
-noao.imred
-==========
+noao.imred.crutil
+=================
 
 Notes
 -----
 
-blah blah cats blah blah
-
 Contents:
 
--  `crutil.crgrow <#crgrow>`__
+-  `crgrow <#crgrow>`__
+-  `crmedian <#crmedian>`__
 
 
 
@@ -26,8 +25,11 @@ the values in any numpy array. The dilation task is a wrapper around
 
 .. code:: python
 
-    from astropy.io import fits
+    # Standard Imports
     from skimage.morphology import disk,dilation
+    
+    # Astronomy Specific Imports
+    from astropy.io import fits
 
 .. code:: python
 
