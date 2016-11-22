@@ -1,5 +1,5 @@
 ****************
-Stsdas package
+STAK package
 ****************
 
 A package containing Python astronomy tools.
@@ -7,4 +7,4 @@ A package containing Python astronomy tools.
 Reference/API
 =============
 
-.. automodapi:: stsdas
+.. automodapi:: stak
