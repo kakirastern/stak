@@ -9,7 +9,7 @@
 ===================================
 The STAK Project
 ===================================
-Python astronomy software and tutorial materials.
+Space Telescope Astronomy Kit (STAK), a resource for Python astronomy software and tutorial materials.
 
 The new and improved Python version
 ===================================
@@ -32,7 +32,7 @@ You can send us any comments or questions at our **echo page**
   
 |
 
-STSDAS Package Documentation
+STAK Package Documentation
 ============================
 
 .. toctree::
