@@ -1,11 +1,11 @@
 STAK
 ====
 
-.. image:: https://readthedocs.org/projects/iraf-replacement/badge/?version=latest
-    :target: http://iraf-replacement.readthedocs.io/en/latest/
+.. image:: https://readthedocs.org/projects/stak/badge/?version=latest
+    :target: http://stak.readthedocs.io/en/latest/
 
-.. image:: https://travis-ci.org/spacetelescope/iraf_replacement.svg?branch=master
-    :target: https://travis-ci.org/spacetelescope/iraf_replacement
+.. image:: https://travis-ci.org/spacetelescope/stak.svg?branch=master
+    :target: https://travis-ci.org/spacetelescope/stak
 
 .. image:: http://img.shields.io/badge/powered%20by-AstroPy-orange.svg?style=flat
     :target: http://www.astropy.org
