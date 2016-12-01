@@ -5,8 +5,6 @@ tables.fitsio
 Notes
 -----
 
-blah blah cats blah
-
 Contents:
 
 -  `catfits <#catfits>`__
@@ -21,8 +19,11 @@ any examples in this notebook \*\*
 
 .. code:: python
 
-    from astropy.io import fits
+    # Standard Imports
     import glob
+    
+    # Astronomy Specific Imports
+    from astropy.io import fits
 
 .. code:: python
 
@@ -99,4 +100,19 @@ any examples in this notebook \*\*
     5    TIME        ImageHDU        37   (1014, 1014)   float32   
     6    WCSCORR     BinTableHDU     59   7R x 24C     [40A, I, A, 24A, 24A, 24A, 24A, D, D, D, D, D, D, D, D, 24A, 24A, D, D, D, D, J, 40A, 128A]   
 
+
+
+
+Not Replacing
+-------------
+
+-  fits\_example - not actually a task, provides more documentation for
+   stwfits and strfits
+-  fitscopy
+-  geis - description of GEIS file format
+-  gftoxdim - GEIS conversion
+-  strfits - converts FITS files to GEIS, STSDAS tables, or text
+-  stwfits - convert image,taable, ascii to fits (I feel like this is
+   covered enough in astropy examples)
+-  xdimtogf - convert single group GEIS to multigroup GEIS
 

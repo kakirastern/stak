@@ -9,20 +9,20 @@ General fits image tools
 
 Contents:
 
--  `imcopy <#imcopy>`__
--  `imheader <#imheader>`__
--  `hselect <#hselect>`__
--  `hedit <#hedit>`__
--  `listpixels <#listpixels>`__
 -  `chpixtype <#chpixtype>`__
--  `imstatistics <#imstatistics>`__
+-  `hedit <#hedit>`__
+-  `hselect <#hselect>`__
 -  `imarith/imdivide <#imarith>`__
+-  `imcopy <#imcopy>`__
 -  `imfunction/imexpr <#imfunction>`__
+-  `imheader <#imheader>`__
 -  `imhistogram <#imhistogram>`__
 -  `imreplace <#imreplace>`__
--  `imsum <#imsum>`__
--  `imstack <#imstack>`__
 -  `imslice <#imslice>`__
+-  `imstack <#imstack>`__
+-  `imstatistics <#imstatistics>`__
+-  `imsum <#imsum>`__
+-  `listpixels <#listpixels>`__
 
 
 
@@ -59,7 +59,15 @@ translates the chpixtype newpixtype options into their equivalent
 
 .. code:: python
 
-    # general imports
+    # Astronomy Specific Imports
+    from astropy.io import fits
+
+.. code:: python
+
+    # Standard Imports
+    import numpy as np
+    
+    # Astronomy Specific Imports
     from astropy.io import fits
 
 .. code:: python
@@ -96,7 +104,7 @@ it does/doesn't exist, and how to delete keywords from the header.
 
 .. code:: python
 
-    # general imports
+    # Astronomy Specific Imports
     from astropy.io import fits
 
 .. code:: python
@@ -148,7 +156,7 @@ package ``Hselect`` class.
 
 
 
-imarith / imdivide
+imarith - imdivide
 ------------------
 
 \*\* Please review the `Notes <#notes>`__ section above before running
@@ -166,7 +174,7 @@ for more details
 
 .. code:: python
 
-    # general imports
+    # Astronomy Specific Imports
     from astropy.io import fits
 
 .. code:: python
@@ -214,7 +222,7 @@ new filename.
 
 .. code:: python
 
-    # general imports
+    # Astronomy Specific Imports
     from astropy.io import fits
 
 .. code:: python
@@ -230,7 +238,7 @@ new filename.
 
 
 
-imfunction / imexpr
+imfunction - imexpr
 -------------------
 
 \*\* Please review the `Notes <#notes>`__ section above before running
@@ -254,9 +262,11 @@ Example using exsisting numpy function:
 
 .. code:: python
 
-    # general imports
-    from astropy.io import fits
+    # Standard Imports
     import numpy as np
+    
+    # Astronomy Specific Imports
+    from astropy.io import fits
 
 .. code:: python
 
@@ -274,58 +284,8 @@ Example using exsisting numpy function:
     
     # Now save out to a new file, and close the original file, changes will
     # not be applied to the oiginal fits file.
-    hdu.writeto(output_data)
+    hdu.writeto(output_data, clobber=True)
     hdu.close()
-
-
-::
-
-
-    ---------------------------------------------------------------------------
-
-    IOError                                   Traceback (most recent call last)
-
-    <ipython-input-22-5b209c2fe4f8> in <module>()
-         13 # Now save out to a new file, and close the original file, changes will
-         14 # not be applied to the oiginal fits file.
-    ---> 15 hdu.writeto(output_data)
-         16 hdu.close()
-
-
-    /Users/ogaz/miniconda2/envs/irafdev/lib/python2.7/site-packages/astropy/io/fits/hdu/hdulist.pyc in writeto(self, fileobj, output_verify, clobber, checksum)
-        684         # file object that's open to write only, or in append/update modes
-        685         # but only if the file doesn't exist.
-    --> 686         fileobj = _File(fileobj, mode='ostream', clobber=clobber)
-        687         hdulist = self.fromfile(fileobj)
-        688 
-
-
-    /Users/ogaz/miniconda2/envs/irafdev/lib/python2.7/site-packages/astropy/io/fits/file.pyc in __init__(self, fileobj, mode, memmap, clobber, cache)
-        148             self._open_fileobj(fileobj, mode, clobber)
-        149         elif isinstance(fileobj, string_types):
-    --> 150             self._open_filename(fileobj, mode, clobber)
-        151         else:
-        152             self._open_filelike(fileobj, mode, clobber)
-
-
-    /Users/ogaz/miniconda2/envs/irafdev/lib/python2.7/site-packages/astropy/io/fits/file.pyc in _open_filename(self, filename, mode, clobber)
-        474 
-        475         if mode == 'ostream':
-    --> 476             self._overwrite_existing(clobber, None, True)
-        477 
-        478         if os.path.exists(self.name):
-
-
-    /Users/ogaz/miniconda2/envs/irafdev/lib/python2.7/site-packages/astropy/io/fits/file.pyc in _overwrite_existing(self, clobber, fileobj, closed)
-        393                     os.remove(self.name)
-        394             else:
-    --> 395                 raise IOError("File %r already exists." % self.name)
-        396 
-        397     def _open_fileobj(self, fileobj, mode, clobber):
-
-
-    IOError: File '/eng/ssb/iraf_transition/test_data/imfunction_out.fits' already exists.
-
 
 Example using user defined function and ``np.vectorize``:
 
@@ -367,11 +327,12 @@ of images. Here we can use the ``astropy`` convenience function,
 
 .. code:: python
 
-    # general imports
-    from astropy.io import fits
-    
-    # specific imports
+    # Standard Imports
+    import numpy as np
     import glob
+    
+    # Astronomy Specific Imports
+    from astropy.io import fits
 
 .. code:: python
 
@@ -824,14 +785,14 @@ histogram type, scaling, bin sizes, and more
 
 .. code:: python
 
-    # general imports
-    from astropy.io import fits
+    # Standard Imports
     import numpy as np
     
-    # specific imports
-    import matplotlib.pyplot as plt
+    # Astronomy Specific Imports
+    from astropy.io import fits
     
-    # Let's also make our plots show up in this notebook window
+    # Plotting Imports/Setup
+    import matplotlib.pyplot as plt
     %matplotlib inline
 
 .. code:: python
@@ -850,7 +811,7 @@ histogram type, scaling, bin sizes, and more
 
 
 
-.. image:: images.imutil_files/images.imutil_44_0.png
+.. image:: images.imutil_files/images.imutil_45_0.png
 
 
 
@@ -868,9 +829,11 @@ or the ``skimage.dilation`` documentation
 
 .. code:: python
 
-    # general imports
-    from astropy.io import fits
+    # Standard Imports
     import numpy as np
+    
+    # Astronomy Specific Imports
+    from astropy.io import fits
 
 .. code:: python
 
@@ -925,10 +888,8 @@ usage
 
 .. code:: python
 
-    # general imports
+    # Astronomy Specific Imports
     from astropy.io import fits
-    
-    # specific imports
     from astropy import stats
 
 .. code:: python
@@ -962,11 +923,9 @@ Please see the documentation for more details
 
 .. code:: python
 
-    # general imports
+    # Astronomy Specific Imports
     from astropy.io import fits
     from astropy import units
-    
-    # specific imports
     from ccdproc import CCDData, Combiner
 
 .. code:: python
@@ -1035,8 +994,7 @@ Not Replacing
 -  imgets - see **images.imutil.hselect**
 -  minmax - see **images.imutil.imstat**
 
- ### to-do \* Do we want to add "with fits.open" to some cells? \* what
-conclusion did we come to about imarith / imdivide exmaples? \* Add
-entry point examples here? Not sure... \* Add where example to imreplace
-(?) \* follow up on imslice/imstack \* What did we decide about imtile?
+ ### to-do \* Do we want to add "with fits.open" to some cells? \* Add
+entry point examples here? \* Add where example to imreplace (?) \*
+follow up on imslice-imstack
 

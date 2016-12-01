@@ -22,9 +22,15 @@ examples in this notebook**
 
 .. code:: python
 
-    # general imports
+    # Standard Imports
+    import numpy as np
     
-    # specific imports
+    # Astronomy Specific Imports
+    from astropy.io import fits
+    
+    # Plotting Imports/Setup
+    import matplotlib.pyplot as plt
+    %matplotlib inline
 
 .. code:: python
 
@@ -40,9 +46,15 @@ any examples in this notebook \*\*
 
 .. code:: python
 
-    # global imports
+    # Standard Imports
+    import numpy as np
     
-    # specific imports
+    # Astronomy Specific Imports
+    from astropy.io import fits
+    
+    # Plotting Imports/Setup
+    import matplotlib.pyplot as plt
+    %matplotlib inline
 
 .. code:: python
 
@@ -56,3 +68,6 @@ Not Replacing
 -  Task3
 -  Task4
 
+For question, comments, or feedback please see `our doc
+page <http://stak.readthedocs.io/en/latest/#>`__ (what, our github page,
+our doc page, the echo page?)

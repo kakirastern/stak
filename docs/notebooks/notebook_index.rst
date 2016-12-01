@@ -12,6 +12,8 @@ Index
 
   images.imfilter.rst
   images.imfit.rst
+  images.imgeom.rst
   images.imutil.rst
-  noao.imred.rst
+  noao.imred.crutil.rst
   tables.fitsio.rst
+  Template.rst

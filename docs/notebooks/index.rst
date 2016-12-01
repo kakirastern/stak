@@ -14,6 +14,7 @@ Image Manipulation:
 
   images.imfilter.rst
   images.imfit.rst
+  images.imgeom.rst
   images.imutil.rst
 
 Fits Tools:
@@ -28,7 +29,7 @@ Cosmic Ray Rejections:
 .. toctree::
   :maxdepth: 1
 
-  noao.imred.rst
+  noao.imred.crutil.rst
   
 Index
 -----
