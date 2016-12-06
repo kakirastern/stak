@@ -75,6 +75,13 @@ matrix:
         - python: 3.5
           env: NUMPY_VERSION=prerelease
 
+before_script:
+    - git clone https://github.com/astropy/sphinx-automodapi.git
+    - cd sphinx-automodapi; python setup.py install; cd -;
+
+    - git clone https://github.com/spacetelescope/stsci_sphinx_theme.git
+    - cd stsci_sphinx_theme; python setup.py install; cd -;
+
 install:
 
     # We now use the ci-helpers package to set up our testing environment.
