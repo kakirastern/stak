@@ -5,15 +5,52 @@ noao.imred.crutil
 Notes
 -----
 
+The noao.imred.crutil package contained various algorithims for finding
+and replacing comsic rays in single images or image sets.
+
 Contents:
 
+-  `cosmicrays <#cosmicrays>`__
+-  `craverage <#craverage>`__
+-  `crfix <#crfix>`__
 -  `crgrow <#crgrow>`__
 -  `crmedian <#crmedian>`__
+-  `crnebula <#crnebula>`__
 
 
 
-crutil.crgrow
--------------
+cosmicrays
+----------
+
+.. figure:: static/150pxblueconstuc.png
+   :alt: Work in progress
+
+   blueConstuct
+
+
+
+craverage
+---------
+
+.. figure:: static/150pxblueconstuc.png
+   :alt: Work in progress
+
+   blueConstuct
+
+
+
+crfix
+-----
+
+.. figure:: static/150pxblueconstuc.png
+   :alt: Work in progress
+
+   blueConstuct
+
+
+
+crgrow
+------
 
 **Please review the `Notes <#notes>`__ section above before running any
 examples in this notebook**
@@ -50,9 +87,68 @@ the values in any numpy array. The dilation task is a wrapper around
 
 
 
-crutil.crmedian
----------------
+crmedian
+--------
+
+**Please review the `Notes <#notes>`__ section above before running any
+examples in this notebook**
+
+The crmedian task is a way to indentify and replace cosmic rays in a
+single image by detecting pixels that deviate a statistically
+significant amount from the median by comparing to a median filtered
+version of the image. The indentfied cosmic rays can then be replaced by
+the median filtered value. A similar algorithim has been used in
+`ccdproc.cosmicray\_median <http://ccdproc.readthedocs.io/en/latest/api/ccdproc.cosmicray_median.html#ccdproc.cosmicray_median>`__.
+In ``ccdproc.cosmicray_median`` you also have the option of using an
+error array. If none is provided the standard deviation of the data is
+used.
 
 .. code:: python
 
-    # use ccdproc ccdproc.cosmicray_median (they also have an la cosmic)
+    # Astronomy Specific Imports
+    from astropy.io import fits
+    from astropy import units
+    from ccdproc import cosmicray_median, fits_ccddata_reader
+
+.. code:: python
+
+    # Change these values to your desired data files
+    test_data = '/eng/ssb/iraf_transition/test_data/iczgs3y5q_flt.fits'
+    
+    # First we need to pull out the science arrays to create CCDData objects
+    # Our acutal unit is electrons/sec, this is not accepted by the current
+    # set of units
+    image_data = fits_ccddata_reader(test_data, hdu=1, unit=units.electron/units.s, hdu_uncertainty=2)
+    error_data = image_data.uncertainty.array
+    
+    # Now we run cosmicray_median, since we input a CCDData type, a CCDData type is returned
+    # If a numpy.ndarray if the input data type, it will return a numpy.ndarray
+    newdata = cosmicray_median(image_data, error_image=error_data, thresh=5, mbox=11, rbox=11, gbox=3)
+
+
+.. parsed-literal::
+
+    INFO: using the unit electron / s passed to the FITS reader instead of the unit ELECTRONS/S in the FITS file. [ccdproc.ccddata]
+
+
+
+
+crnebula
+--------
+
+.. figure:: static/150pxblueconstuc.png
+   :alt: Work in progress
+
+   blueConstuct
+
+
+
+Not Replacing
+-------------
+
+-  crcombine - see **ctio.immatch.imcombine**
+-  credit - see **images.tv.imedit**
+
+For questions or comments please see `our github
+page <https://github.com/spacetelescope/stak>`__. We encourage and
+appreciate user feedback.

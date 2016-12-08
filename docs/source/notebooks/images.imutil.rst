@@ -5,7 +5,7 @@ images.imutil
 Notes
 -----
 
-General fits image tools
+images.imutil contains general fits image tools
 
 Contents:
 
@@ -137,21 +137,81 @@ hselect
 \*\* Please review the `Notes <#notes>`__ section above before running
 any examples in this notebook \*\*
 
-hselect is used to pull out specific header keywords. You can also use
-specific keyword values to filter files. We will be using the ?????
-package ``Hselect`` class.
+hselect is used to pull out specific header keywords. You can provide
+any filename string as you would in IRAF and it will be exapanded
+(wildcards are accepted). You can also use specific keyword values to
+filter files. We will be using the ``stak`` package ``Hselect`` class.
+The output table is an ``astropy.table`` object and stored in the
+``table`` attribute.
 
 .. code:: python
 
-    "In progress..."
+    # Astronomy Specific Imports
+    from stak import Hselect
+
+.. code:: python
+
+    # Create Hselect object
+    myList = Hselect("/eng/ssb/iraf_transition/test_data/jcz*", "BUNIT,TIME-OBS", extension="0,1,2,3")
+    # Display output astropy table object in nice notebook formatting
+    myList.table.show_in_notebook()
 
 
+
+
+.. raw:: html
+
+    &lt;Table masked=True length=8&gt;
+    <table id="table4497701264-588354" class="table-striped table-bordered table-condensed">
+    <thead><tr><th>idx</th><th>Filename</th><th>ExtNumber</th><th>BUNIT</th><th>TIME-OBS</th></tr></thead>
+    <tr><td>0</td><td>/eng/ssb/iraf_transition/test_data/jczgx1ppq_flc.fits</td><td>0</td><td>--</td><td>01:04:51</td></tr>
+    <tr><td>1</td><td>/eng/ssb/iraf_transition/test_data/jczgx1ppq_flc.fits</td><td>1</td><td>ELECTRONS</td><td>--</td></tr>
+    <tr><td>2</td><td>/eng/ssb/iraf_transition/test_data/jczgx1ppq_flc.fits</td><td>2</td><td>ELECTRONS</td><td>--</td></tr>
+    <tr><td>3</td><td>/eng/ssb/iraf_transition/test_data/jczgx1ppq_flc.fits</td><td>3</td><td>UNITLESS</td><td>--</td></tr>
+    <tr><td>4</td><td>/eng/ssb/iraf_transition/test_data/jczgx1q1q_flc.fits</td><td>2</td><td>ELECTRONS</td><td>--</td></tr>
+    <tr><td>5</td><td>/eng/ssb/iraf_transition/test_data/jczgx1q1q_flc.fits</td><td>3</td><td>UNITLESS</td><td>--</td></tr>
+    <tr><td>6</td><td>/eng/ssb/iraf_transition/test_data/jczgx1q1q_flc.fits</td><td>0</td><td>--</td><td>02:16:10</td></tr>
+    <tr><td>7</td><td>/eng/ssb/iraf_transition/test_data/jczgx1q1q_flc.fits</td><td>1</td><td>ELECTRONS</td><td>--</td></tr>
+    </table><style>table.dataTable {clear: both; width: auto !important; margin: 0 !important;}
+    .dataTables_info, .dataTables_length, .dataTables_filter, .dataTables_paginate{
+    display: inline-block; margin-right: 1em; }
+    .paginate_button { margin-right: 5px; }
+    </style>
+    <script>
+    require.config({paths: {
+        datatables: 'https://cdn.datatables.net/1.10.9/js/jquery.dataTables.min'
+    }});
+    require(["datatables"], function(){
+        console.log("$('#table4497701264-588354').dataTable()");
+        $('#table4497701264-588354').dataTable({
+            "order": [],
+            "iDisplayLength": 50,
+            "aLengthMenu": [[10, 25, 50, 100, 500, 1000, -1], [10, 25, 50, 100, 500, 1000, 'All']],
+            "pagingType": "full_numbers"
+        });
+    });
+    </script>
+
+
+
+
+.. code:: python
+
+    # Create Hselect object using expression parsing
+    myList2 = Hselect("/eng/ssb/iraf_transition/test_data/jcz*", "BUNIT", extension="0,1,2,3",
+                     expr="BUNIT='ELECTRONS'")
+    # Display output astropy table object with a standard print
+    print(myList2.table)
 
 
 .. parsed-literal::
 
-    'In progress...'
-
+                           Filename                       ExtNumber   BUNIT  
+    ----------------------------------------------------- --------- ---------
+    /eng/ssb/iraf_transition/test_data/jczgx1q1q_flc.fits         2 ELECTRONS
+    /eng/ssb/iraf_transition/test_data/jczgx1ppq_flc.fits         1 ELECTRONS
+    /eng/ssb/iraf_transition/test_data/jczgx1ppq_flc.fits         2 ELECTRONS
+    /eng/ssb/iraf_transition/test_data/jczgx1q1q_flc.fits         1 ELECTRONS
 
 
 
@@ -811,7 +871,7 @@ histogram type, scaling, bin sizes, and more
 
 
 
-.. image:: images.imutil_files/images.imutil_45_0.png
+.. image:: images.imutil_files/images.imutil_47_0.png
 
 
 
@@ -824,8 +884,8 @@ any examples in this notebook \*\*
 
 We can use simple ``numpy`` array manipulation to replicate imreplace.
 For details on how to grow the boolean array for replacement see crgrow,
-or the ``skimage.dilation`` documentation
-(http://scikit-image.org/docs/0.12.x/api/skimage.morphology.html?highlight=dilation#skimage.morphology.dilation).
+or the ```skimage.dilation``
+documentation <http://scikit-image.org/docs/0.12.x/api/skimage.morphology.html?highlight=dilation#skimage.morphology.dilation>`__.
 
 .. code:: python
 
@@ -843,14 +903,24 @@ or the ``skimage.dilation`` documentation
     # Pull out the first science array, make boolean mask with your requirements
     hdu = fits.open(test_data)
     sci1 = hdu[1].data
-    mask = np.logical_and(sci1>0.5, sci1<0.6)
+    hdu.close()
+    mask1 = np.logical_and(sci1>0.5, sci1<0.6)
     
     # Use mask to replace values
-    new_value = 999
-    sci1[mask] = new_value
+    sci1[mask1] = 999
     
-    # We are not saving changes here
-    hdu.close()
+    # We can also use numpy where to pull out index numbers
+    mask2 = np.where(sci1 > 1000)
+    print mask2
+
+
+.. parsed-literal::
+
+    (array([ 474,  474,  606,  607,  607,  607,  608,  608,  608,  608,  609,
+            609,  609,  609,  610,  610,  610,  804,  804,  809,  809,  810,
+            883,  883, 1002, 1013]), array([455, 456, 285, 284, 285, 286, 284, 285, 286, 287, 284, 285, 286,
+           287, 284, 285, 286, 349, 350,  53, 575,  53, 161, 162, 104, 460]))
+
 
 
 
@@ -860,7 +930,43 @@ imslice
 \*\* Please review the `Notes <#notes>`__ section above before running
 any examples in this notebook \*\*
 
-**Need a datacube image, also, see below note**
+Imslice can take a 3-D datacube fits image and return multiple 2D images
+sliced through the chosen dimension. Keep in mind for the python
+equivalent workflow that the header file from the original input image
+will be used for all output images, including WCS information. We will
+be using
+```numpy.split`` <https://docs.scipy.org/doc/numpy/reference/generated/numpy.split.html#numpy.split>`__.
+
+.. code:: python
+
+    # Astronomy Specific Imports
+    from astropy.io import fits
+
+.. code:: python
+
+    # Pull image data array and image header
+    orig_hdu = fits.open('/eng/ssb/iraf_transition/test_data/imstack_out.fits')
+    header1 = orig_hdu[0].header
+    image1 = orig_hdu[0].data
+    orig_hdu.close()
+    
+    # Slice images easily by using numpy.split, which returns a list of the output arrays
+    arr_list = np.split(image1, 2)
+    print("final shape of a slice is:")
+    print(arr_list[0].shape)
+    
+    # Now we can write this new array into a new fits files by packing it back into an HDU object
+    hdu1 = fits.PrimaryHDU(arr_list[0],header1)
+    hdu1.writeto('/eng/ssb/iraf_transition/test_data/imslice_out1.fits', clobber=True)
+    hdu2 = fits.PrimaryHDU(arr_list[1],header1)
+    hdu2.writeto('/eng/ssb/iraf_transition/test_data/imslice_out2.fits', clobber=True)
+
+
+.. parsed-literal::
+
+    final shape of a slice is:
+    (1, 2048, 4096)
+
 
 
 
@@ -870,6 +976,42 @@ imstack
 \*\* Please review the `Notes <#notes>`__ section above before running
 any examples in this notebook \*\*
 
+imstack can take multiple fits images and stack the data, writing out a
+new file where the fits data is 1-dimension higher then the input
+images. Here we show that manipulation using the ``astropy`` library and
+```numpy.stack`` <https://docs.scipy.org/doc/numpy/reference/generated/numpy.stack.html#numpy.stack>`__.
+
+.. code:: python
+
+    # Standard Imports
+    import numpy as np
+    
+    # Astronomy Specific Imports
+    from astropy.io import fits
+
+.. code:: python
+
+    # Pull two image data arrays and image header
+    header1 = fits.getheader('/eng/ssb/iraf_transition/test_data/jczgx1ppq_flc.fits',ext=1)
+    image1 = fits.getdata('/eng/ssb/iraf_transition/test_data/jczgx1ppq_flc.fits')
+    image2 = fits.getdata('/eng/ssb/iraf_transition/test_data/jczgx1q1q_flc.fits')
+    
+    # Stack arrays, the new dimension will be put first, unless otherwise specified with the axis keyword
+    outstack = np.stack((image1,image2))
+    print("final shape is:")
+    print(outstack.shape)
+    
+    # Now we can write this new array into a new fits file by packing it back into an HDU object
+    hdu = fits.PrimaryHDU(outstack,header1)
+    hdu.writeto('/eng/ssb/iraf_transition/test_data/imstack_out.fits', clobber=True)
+
+
+.. parsed-literal::
+
+    final shape is:
+    (2, 2048, 4096)
+
+
 
 
 imstatistics
@@ -878,13 +1020,11 @@ imstatistics
 \*\* Please review the `Notes <#notes>`__ section above before running
 any examples in this notebook \*\*
 
-**another good candidate for a command line wrapper**
-
 We will use the ``astropy.stats.sigma_clipped_stats`` function here,
 which has some wider capabilites then the imstatistics function. Please
-see the ``stats`` package documentation for details on the advanced
-usage
-(http://docs.astropy.org/en/stable/api/astropy.stats.sigma\_clipped\_stats.html).
+see the ``stats`` `package
+documentation <http://docs.astropy.org/en/stable/api/astropy.stats.sigma_clipped_stats.html>`__
+for details on the advanced usage .
 
 .. code:: python
 
@@ -979,8 +1119,37 @@ listpixels
 \*\* Please review the `Notes <#notes>`__ section above before running
 any examples in this notebook \*\*
 
-**I know of at least one person who still uses this quite a bit, I think
-we should add this as a command line function**
+listpixels was used to list an indexed section of a FITs data array.
+This is easy to do using ``astropy``, but keep in mind that Python
+indexs from zero, and with the y-axis leading, i.e. [y,x]. You also want
+to end the cut with the pixel *after* the end pixel. So to get 1-10 in x
+and 5-15 in y, you will index like so: array[4:15,0:10]
+
+.. code:: python
+
+    # Astronomy Specific Imports
+    from astropy.io import fits
+
+.. code:: python
+
+    # Change these values to your desired data files
+    test_data1 = '/eng/ssb/iraf_transition/test_data/iczgs3y5q_flt.fits'
+    
+    # To quickly pull out the data array you can use the astropy convience fucntion
+    data_arr = fits.getdata(test_data1,ext=1)
+    
+    # Now we can index the array as desired, we're cutting out 5 in y, and 2 in x
+    print data_arr[0:5,0:2]
+
+
+.. parsed-literal::
+
+    [[ 0.86692303  0.80678135]
+     [ 0.83312052  0.76854318]
+     [ 0.77341086  0.80276382]
+     [ 0.80539584  0.78261763]
+     [ 0.78274417  0.82206035]]
+
 
 
 
@@ -994,7 +1163,6 @@ Not Replacing
 -  imgets - see **images.imutil.hselect**
 -  minmax - see **images.imutil.imstat**
 
- ### to-do \* Do we want to add "with fits.open" to some cells? \* Add
-entry point examples here? \* Add where example to imreplace (?) \*
-follow up on imslice-imstack
-
+For questions or comments please see `our github
+page <https://github.com/spacetelescope/stak>`__. We encourage and
+appreciate user feedback.

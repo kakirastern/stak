@@ -68,6 +68,6 @@ Not Replacing
 -  Task3
 -  Task4
 
-For question, comments, or feedback please see `our doc
-page <http://stak.readthedocs.io/en/latest/#>`__ (what, our github page,
-our doc page, the echo page?)
+For questions or comments please see `our github
+page <https://github.com/spacetelescope/stak>`__. We encourage and
+appreciate user feedback.
