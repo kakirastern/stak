@@ -2,6 +2,8 @@
 images.imfilter
 ===============
 
+What does this package do?
+
 Notes
 -----
 
@@ -98,7 +100,7 @@ using ``Box2DKernel``, which is convient for square box sizes.
 
 
 
-.. image:: images.imfilter_files/images.imfilter_10_0.png
+.. image:: images.imfilter_files/images.imfilter_11_0.png
 
 
 .. code:: python
@@ -117,7 +119,7 @@ using ``Box2DKernel``, which is convient for square box sizes.
 
 
 
-.. image:: images.imfilter_files/images.imfilter_11_0.png
+.. image:: images.imfilter_files/images.imfilter_12_0.png
 
 
 
@@ -171,7 +173,7 @@ kernel applied to a 10 by 10 array using the
 
 
 
-.. image:: images.imfilter_files/images.imfilter_17_0.png
+.. image:: images.imfilter_files/images.imfilter_18_0.png
 
 
 .. code:: python
@@ -190,7 +192,7 @@ kernel applied to a 10 by 10 array using the
 
 
 
-.. image:: images.imfilter_files/images.imfilter_18_0.png
+.. image:: images.imfilter_files/images.imfilter_19_0.png
 
 
 Here is an example using masking with ``scipy.convolve``
@@ -229,7 +231,7 @@ Here is an example using masking with ``scipy.convolve``
 
 
 
-.. image:: images.imfilter_files/images.imfilter_22_0.png
+.. image:: images.imfilter_files/images.imfilter_23_0.png
 
 
 .. code:: python
@@ -248,7 +250,7 @@ Here is an example using masking with ``scipy.convolve``
 
 
 
-.. image:: images.imfilter_files/images.imfilter_23_0.png
+.. image:: images.imfilter_files/images.imfilter_24_0.png
 
 
 
@@ -310,7 +312,7 @@ http://docs.astropy.org/en/stable/api/astropy.convolution.Gaussian2DKernel.html#
 
 
 
-.. image:: images.imfilter_files/images.imfilter_29_0.png
+.. image:: images.imfilter_files/images.imfilter_30_0.png
 
 
 .. code:: python
@@ -329,7 +331,7 @@ http://docs.astropy.org/en/stable/api/astropy.convolution.Gaussian2DKernel.html#
 
 
 
-.. image:: images.imfilter_files/images.imfilter_30_0.png
+.. image:: images.imfilter_files/images.imfilter_31_0.png
 
 
 
@@ -381,7 +383,7 @@ create your kernel.
 
 
 
-.. image:: images.imfilter_files/images.imfilter_36_0.png
+.. image:: images.imfilter_files/images.imfilter_37_0.png
 
 
 .. code:: python
@@ -399,7 +401,7 @@ create your kernel.
 
 
 
-.. image:: images.imfilter_files/images.imfilter_37_0.png
+.. image:: images.imfilter_files/images.imfilter_38_0.png
 
 
 
@@ -452,7 +454,7 @@ Apply a median filter to your data array. We will use the
 
 
 
-.. image:: images.imfilter_files/images.imfilter_43_0.png
+.. image:: images.imfilter_files/images.imfilter_44_0.png
 
 
 For a ring median filter we can supply a more specific footprint to the
@@ -496,7 +498,7 @@ the ``astroimtools`` library
 
 
 
-.. image:: images.imfilter_files/images.imfilter_47_0.png
+.. image:: images.imfilter_files/images.imfilter_48_0.png
 
 
 .. code:: python
@@ -515,7 +517,7 @@ the ``astroimtools`` library
 
 
 
-.. image:: images.imfilter_files/images.imfilter_48_0.png
+.. image:: images.imfilter_files/images.imfilter_49_0.png
 
 
 
@@ -578,7 +580,7 @@ For a box footprint:
 
 
 
-.. image:: images.imfilter_files/images.imfilter_56_0.png
+.. image:: images.imfilter_files/images.imfilter_57_0.png
 
 
 For a ring footprint:
@@ -618,7 +620,7 @@ For a ring footprint:
 
 
 
-.. image:: images.imfilter_files/images.imfilter_60_0.png
+.. image:: images.imfilter_files/images.imfilter_61_0.png
 
 
 .. code:: python
@@ -637,19 +639,16 @@ For a ring footprint:
 
 
 
-.. image:: images.imfilter_files/images.imfilter_61_0.png
+.. image:: images.imfilter_files/images.imfilter_62_0.png
 
 
  ## Not Replacing
 
 -  runmed - see **images.imutil.imsum**
 -  fmode
+-  fmedian
+-  gradient - **may** replace in future
 
- ### fmedian
-
-runmed seems to be rather complicated, should figure out if people ever
-use this...
-
- ### to-do \* figure out gradient usage \* figure out fmedian (is it
-used?)
-
+For questions or comments please see `our github
+page <https://github.com/spacetelescope/stak>`__. We encourage and
+appreciate user feedback.

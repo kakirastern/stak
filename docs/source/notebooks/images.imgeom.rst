@@ -5,7 +5,10 @@ images.imgeom
 Notes
 -----
 
-talk about boundry condition options and interpolation options
+Add note about this NOT updating WCS, maybe mention that this is on our
+to-do list.
+
+talk about boundry condition options and interpolation options.
 
 in iraf packges interpolations are:
 nearest,linear,poly3,poly5,spline3,sinc,drizzle in iraf packages

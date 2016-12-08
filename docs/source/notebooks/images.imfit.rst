@@ -29,7 +29,7 @@ any examples in this notebook \*\*
 The fit1d task allows you to fit a function to image lines. The function
 options available are legendre, chebyshev, spline1 and spline3.
 
-**Should we write a function for this, do people use it?**
+add example using one fit
 
 -  leg - astropy.modeling.polynomial.Legendre1D (or 2D)
 -  cheb - astropy.modeling.polynomial.Chebyshev1D (or 2D)
