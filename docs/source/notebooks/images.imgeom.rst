@@ -5,26 +5,38 @@ images.imgeom
 Notes
 -----
 
-Add note about this NOT updating WCS, maybe mention that this is on our
-to-do list.
+.. figure:: static/150pxblueconstuc.png
+   :alt: Work in progress
 
-talk about boundry condition options and interpolation options.
+   blueConstuct
 
-in iraf packges interpolations are:
-nearest,linear,poly3,poly5,spline3,sinc,drizzle in iraf packages
-boundary cond are: nearest,wrap,reflect,constant
+**General Note about this package:**
 
-for scipy interpolations are: nearest, spline 1-5 for scipy boundary
-opitons are: constant, nearest, reflect or wrap
+The images.imgeom package contains various image spatial manipulation
+and interpolation tasks. The tasks in this IRAF package include support
+for WCS updates after the image manipulation are preformed. We are
+currently working on the replacements for these WCS capabilities. For
+the moment we have included the array manipulation part of these tasks
+in this notebook.
+
+**Boundary Condition and Interpolation Options:**
+
+In the IRAF package the interpolation options are as follows: nearest,
+linear, poly3, poly5, spline3, sinc/lsinc. In the ``scipy.ndimage``
+functions the interpolation option are spline degrees 0-5, where
+spline-0 is nearest and spline-1 is linear.
+
+The boundary condition options for IRAF and ``scipy`` are the same:
+nearest, wrap, reflect, and constant.
 
 Contents:
 
 -  `blkavg <#blkavg>`__
 -  `blkrep <#blkrep>`__
 -  `im3dtran - imtranspose <#im3dtran>`__
+-  `imshift - shiftlines <#imshift>`__
 -  `magnify <#magnify>`__
 -  `rotate <#rotate>`__
--  `shiftlines <#shiftlines>`__
 
 
 
@@ -169,6 +181,59 @@ can handle any number of dimensions.
 
 
 
+imshift - shiftlines
+--------------------
+
+**for this might want to copy this over to imshift, reference that
+entry**
+
+\*\* Please review the `Notes <#notes>`__ section above before running
+any examples in this notebook \*\*
+
+The task imshift can shift an image in x and y by float values and will
+use interpolation to create the output image. Shiftlines preformed
+similar functionality but We will be using
+`scipy.ndimage.shift <https://docs.scipy.org/doc/scipy-0.18.1/reference/generated/scipy.ndimage.shift.html#scipy.ndimage.shift>`__,
+where you can shift in any axis of your image. See the
+`Notes <#notes>`__ at the top of the notebook for fitting and boundary
+options.
+
+.. code:: python
+
+    # Standard Imports
+    import numpy as np
+    from scipy.ndimage import shift
+
+.. code:: python
+
+    # Don't forget that Python uses (y,x) format when specifiying shifts
+    in_array = np.arange(25).reshape(5,5)
+    out_array = shift(x, (0.8,0.8), order=3, mode='constant', cval=2)
+    
+    print('Original array:')
+    print(in_array)
+    print('A zoom of 0.5 in y and 2 in x with nearest')
+    print(out_array)
+
+
+.. parsed-literal::
+
+    Original array:
+    [[ 0  1  2  3  4]
+     [ 5  6  7  8  9]
+     [10 11 12 13 14]
+     [15 16 17 18 19]
+     [20 21 22 23 24]]
+    A zoom of 0.5 in y and 2 in x with nearest
+    [[ 2  2  2  2  2]
+     [ 2  0  2  2  4]
+     [ 2  6  7  8  9]
+     [ 2 11 12 13 14]
+     [ 2 16 18 19 20]]
+
+
+
+
 magnify
 -------
 
@@ -306,60 +371,15 @@ Rotation in increments of 90 degrees:
 
 
 
-shiftlines
-----------
-
-**for this might want to copy this over to imshift, reference that
-entry**
-
-\*\* Please review the `Notes <#notes>`__ section above before running
-any examples in this notebook \*\*
-
-The task shiftlines can shift an image in x by a float values and will
-use interpolation to create the output image. We will be using
-`scipy.ndimage.shift <https://docs.scipy.org/doc/scipy-0.18.1/reference/generated/scipy.ndimage.shift.html#scipy.ndimage.shift>`__,
-where you can shift in any axis of your image. See the
-`Notes <#notes>`__ at the top of the notebook for fitting and boundary
-options.
-
-.. code:: python
-
-    # Standard Imports
-    import numpy as np
-    from scipy.ndimage import shift
-
-.. code:: python
-
-    # Don't forget that Python uses (y,x) format when specifiying shifts
-    in_array = np.arange(25).reshape(5,5)
-    out_array = shift(x, (0.8,0.8), order=3, mode='constant', cval=2)
-    
-    print('Original array:')
-    print(in_array)
-    print('A zoom of 0.5 in y and 2 in x with nearest')
-    print(out_array)
-
-
-.. parsed-literal::
-
-    Original array:
-    [[ 0  1  2  3  4]
-     [ 5  6  7  8  9]
-     [10 11 12 13 14]
-     [15 16 17 18 19]
-     [20 21 22 23 24]]
-    A zoom of 0.5 in y and 2 in x with nearest
-    [[ 2  2  2  2  2]
-     [ 2  0  2  2  4]
-     [ 2  6  7  8  9]
-     [ 2 11 12 13 14]
-     [ 2 16 18 19 20]]
-
-
 
 
 Not Replacing
 -------------
 
--  imlintran - also see `magnify <#magnify>`__, `rotate <#rotate>`__,
-   `shiftlines <#shiftlines>`__, lintran?,register?
+-  imlintran - see `**images.imgeom.magnify** <#magnify>`__,
+   `**images.imgeom.rotate** <#rotate>`__, and
+   `**images.imgeom.imshift** <#imshift>`__
+
+For questions or comments please see `our github
+page <https://github.com/spacetelescope/stak>`__. We encourage and
+appreciate user feedback.
