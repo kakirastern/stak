@@ -1,6 +1,6 @@
-****************
+************
 STAK package
-****************
+************
 
 A package containing Python astronomy tools.
 
