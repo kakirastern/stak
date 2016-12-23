@@ -24,7 +24,6 @@ def test_hselect_basic():
 
     assert correct_table.colnames == hobj.table.colnames
 
-
     for colname in correct_table.colnames:
         assert np.all(correct_table[colname] == hobj.table[colname])
 
@@ -45,11 +44,9 @@ def test_hselect_expression():
 
     assert correct_table.colnames == hobj.table.colnames
 
-    print correct_table
-    print hobj.table
-
     for colname in correct_table.colnames:
         assert np.all(correct_table[colname] == hobj.table[colname])
+
 
 def test_hselect_equality():
     from ..hselect import Hselect
@@ -61,15 +58,12 @@ def test_hselect_equality():
     data_rows = [('/eng/ssb/iraf_transition/test_data/hselect_test.fits', 0, 4.5),
                  ('/eng/ssb/iraf_transition/test_data/hselect_test.fits', 1, 10.55)]
     correct_table = Table(rows=data_rows, names=('Filename', 'Ext', 'A_FLOAT'), dtype=('S80', 'int64', 'float64'))
-    add_col = MaskedColumn(np.ma.masked_array(['string','string'], mask=[0,0]), dtype='S68')
+    add_col = MaskedColumn(np.ma.masked_array(['string', 'string'], mask=[0, 0]), dtype='S68')
     correct_table['A_STRING'] = add_col
 
     hobj = Hselect(test_dir+'hselect_test.fits', 'A_FLOAT,A_STRING', expression='A_STRING="string" AND A_FLOAT > 0')
 
     assert correct_table.colnames == hobj.table.colnames
-
-    print correct_table
-    print hobj.table
 
     for colname in correct_table.colnames:
         assert np.all(correct_table[colname] == hobj.table[colname])
