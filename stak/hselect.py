@@ -6,6 +6,8 @@ Hselect class, use to collate FITS header information
 # STDLIB
 from six import iteritems, string_types
 import operator
+import argparse
+import sys
 import pyparsing as pyp
 
 # THIRD-PARTY
@@ -50,9 +52,9 @@ class Hselect(object):
     --------
     ::
 
-        $ myObj = Hselect("*.fits","BUNIT,TIME-OBS",extension=(0,1,2,3),expr="BUNIT='ELECTRONS'")
+        $ myObj = Hselect("*.fits","BUNIT,TIME-OBS",extension=(0,1,2,3),expression="BUNIT='ELECTRONS'")
 
-        $ myObj = Hselect("jcz8*raw.fits","BUNIT,TIME-OBS",expr="BUNIT='ELECTRONS' AND
+        $ myObj = Hselect("jcz8*raw.fits","BUNIT,TIME-OBS",expression="BUNIT='ELECTRONS' AND
                                                                 (TIME-OBS < 10 OR TIME-OBS > 100")
     """
 
@@ -60,7 +62,6 @@ class Hselect(object):
         """
         set initial parameters, call class functions for preforming selection
         and formatting to masked astropy table.
-
 
         """
 
@@ -72,18 +73,16 @@ class Hselect(object):
         if not isinstance(extension, tuple):
             raise ValueError("extension parameter must be a tuple")
         self.extension = extension
+        if self.extension == ():
+            self.all_ext = True
+        else:
+            self.all_ext = False
 
         self.expr = expression
         self.table = Table()
 
         self.__select()
         self.__dict_to_table()
-
-    def test_method(self):
-        """I don't actually do anthing
-        """
-
-        a = 3
 
     def __select(self):
         """Perform hselect like query on provided file names, inputs were setup in init, and output is
@@ -94,12 +93,15 @@ class Hselect(object):
         for filename in self.filename_list:
             hdulist = fits.open(filename)
 
-            if len(self.extension) == 0:
+            if self.all_ext:
                 self.extension = range(len(hdulist))
 
             for ext in self.extension:
 
-                header = hdulist[ext].header
+                try:
+                    header = hdulist[ext].header
+                except IndexError:
+                    continue
                 outer_key = '{}-{}'.format(filename, ext)
 
                 # check for expressions, will not make dictionary entry if expression false
@@ -314,3 +316,46 @@ def depth_parse(input_list, header):
         return eval_keyword_expr(input_list, header)
     else:
         raise ValueError("no deconstruction match found for list: {}".format(input_list))
+
+
+def main(args=None):
+    if args is None:
+        args = sys.argv[1:]
+
+    parser = argparse.ArgumentParser(description='Select and print header keywords to the screen.  Works like IRAF' +
+                                                 ' Hselect')
+    parser.add_argument('filename', nargs='+', help='Name/s of fits files, wildcards accepted.')
+    parser.add_argument('keywords', help='requested keywords, comma separated')
+    parser.add_argument('-e', '--ext', help='extensions, comma separated')
+    parser.add_argument('-x', '--expression', help='expression to evaluate, accepts =,>,<,>=,<=, must contain ' +
+                        'full expression in quotes')
+
+    try:
+        parsed = parser.parse_args(args)
+
+        if parsed.ext:
+            extension_list = parsed.ext.split(',')
+            # attempt to change input extensions names to ints
+            for i, elem in enumerate(extension_list):
+                try:
+                    extension_list[i] = int(elem)
+                except ValueError:
+                    continue
+
+        if parsed.ext and parsed.expression:
+            hsel = Hselect(parsed.filename, parsed.keywords, extension=tuple(extension_list),
+                           expression=parsed.expression)
+
+        elif parsed.ext and not parsed.expression:
+            hsel = Hselect(parsed.filename, parsed.keywords, extension=tuple(extension_list))
+
+        elif not parsed.ext and parsed.expression:
+            hsel = Hselect(parsed.filename, parsed.keywords, expression=parsed.expression)
+
+        else:
+            hsel = Hselect(parsed.filename, parsed.keywords)
+
+        print(hsel.table)
+
+    except SystemExit:
+        pass
