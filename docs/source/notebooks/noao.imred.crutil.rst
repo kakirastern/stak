@@ -2,11 +2,16 @@
 noao.imred.crutil
 =================
 
+The noao.imred.crutil package contains various algorithims for finding
+and replacing comsic rays in single images or image sets.
+
 Notes
 -----
 
-The noao.imred.crutil package contained various algorithims for finding
-and replacing comsic rays in single images or image sets.
+.. figure:: static/150pxblueconstuc.png
+   :alt: Work in progress
+
+   blueConstuct
 
 Contents:
 
@@ -146,8 +151,8 @@ crnebula
 Not Replacing
 -------------
 
--  crcombine - see **ctio.immatch.imcombine**
--  credit - see **images.tv.imedit**
+-  crcombine - see **ctio.immatch.imcombine, work in progress**
+-  credit - see **images.tv.imedit, work in progress**
 
 For questions or comments please see `our github
 page <https://github.com/spacetelescope/stak>`__. We encourage and

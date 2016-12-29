@@ -2,6 +2,9 @@
 images.imgeom
 =============
 
+The images.imgeom package contains various image spatial manipulation
+and interpolation tasks.
+
 Notes
 -----
 
@@ -12,12 +15,10 @@ Notes
 
 **General Note about this package:**
 
-The images.imgeom package contains various image spatial manipulation
-and interpolation tasks. The tasks in this IRAF package include support
-for WCS updates after the image manipulation are preformed. We are
-currently working on the replacements for these WCS capabilities. For
-the moment we have included the array manipulation part of these tasks
-in this notebook.
+The tasks in this IRAF package include support for WCS updates after the
+image manipulations are preformed. We are currently working on the
+replacements for these WCS capabilities. For the moment we have included
+the array manipulation part of these tasks in this notebook.
 
 **Boundary Condition and Interpolation Options:**
 

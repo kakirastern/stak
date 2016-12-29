@@ -11,7 +11,6 @@ Index
   :maxdepth: 2
 
   images.imfilter.rst
-  images.imfit.rst
   images.imgeom.rst
   images.imutil.rst
   noao.imred.crutil.rst
