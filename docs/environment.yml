@@ -7,6 +7,7 @@ dependencies:
   - scipy
   - astropy
   - numpydoc
+  - pyparsing
   - pip:
     - sphinx_automodapi
     - git+https://github.com/spacetelescope/stsci_sphinx_theme.git#egg=stsci_sphinx_theme
