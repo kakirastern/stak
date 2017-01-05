@@ -13,7 +13,6 @@ Image Manipulation:
   :maxdepth: 1
 
   images.imfilter.rst
-  images.imfit.rst
   images.imgeom.rst
   images.imutil.rst
 

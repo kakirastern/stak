@@ -2,10 +2,11 @@
 images.imutil
 =============
 
+The images.imutil package provides general fits image tools such as
+header editing and image arithimetic.
+
 Notes
 -----
-
-images.imutil contains general fits image tools
 
 Contents:
 
@@ -871,7 +872,7 @@ histogram type, scaling, bin sizes, and more
 
 
 
-.. image:: images.imutil_files/images.imutil_47_0.png
+.. image:: images.imutil_files/images.imutil_48_0.png
 
 
 
@@ -1156,12 +1157,14 @@ and 5-15 in y, you will index like so: array[4:15,0:10]
 Not Replacing
 -------------
 
--  imrename
--  imdelete
--  imtile
--  sections
--  imgets - see **images.imutil.hselect**
--  minmax - see **images.imutil.imstat**
+-  imrename - can use command line utilities or the Python ``os``
+   package for this functionality.
+-  imdelete - can use command line utilities or the Python ``os``
+   package for this functionality.
+-  imtile - **may** replace infuture
+-  sections - IRAF utility function
+-  imgets - see `**images.imutil.hselect** <#hselect>`__
+-  minmax - see `**images.imutil.imstat** <#imstat>`__
 
 For questions or comments please see `our github
 page <https://github.com/spacetelescope/stak>`__. We encourage and

@@ -2,10 +2,16 @@
 tables.fitsio
 =============
 
+The tables.fitsio package contains IO utilities for FITS and GEIS
+images.
+
 Notes
 -----
 
-The tables.fitsio package contained utilitie for FITS and GEIS images.
+Many of the tasks in the this package are no longer in common usage and
+are not covered here. If there is a task you would like to request
+please contact the `STAK
+team <http://stak.readthedocs.io/en/latest/>`__.
 
 Contents:
 

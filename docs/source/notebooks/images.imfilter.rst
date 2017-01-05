@@ -2,16 +2,18 @@
 images.imfilter
 ===============
 
-What does this package do?
+The images.imfilter IRAF package provides an assortment of image
+filtering and convolution tasks.
 
 Notes
 -----
 
-Astropy convolution offers two convolution options, ``convolve()`` is
-better for small kernels, and ``convolve_fft()`` is better for larger
-kernels, please see the `Astropy convolution doc
-page <http://docs.astropy.org/en/stable/convolution/>`__ and `Astropy
-Convolution How
+Python replacements for the images.imfilter tasks can be found in the
+Astropy and Scipy packages. Astropy convolution offers two convolution
+options, ``convolve()`` is better for small kernels, and
+``convolve_fft()`` is better for larger kernels, please see the `Astropy
+convolution doc page <http://docs.astropy.org/en/stable/convolution/>`__
+and `Astropy Convolution How
 to <http://docs.astropy.org/en/stable/convolution/using.html>`__ for
 more details. For this notebook, we will use ``convolve``. Check out the
 list of kernels and filters avaialble for
@@ -48,6 +50,7 @@ Contents:
 
 .. code:: python
 
+    # Temporarily change default colormap to viridis
     import matplotlib.pyplot as plt
     plt.rcParams['image.cmap'] = 'viridis'
 
@@ -645,8 +648,8 @@ For a ring footprint:
  ## Not Replacing
 
 -  runmed - see **images.imutil.imsum**
--  fmode
--  fmedian
+-  fmode - see `images.imfilter.mode <#mode>`__
+-  fmedian - see `images.imfilter.median <#median>`__
 -  gradient - **may** replace in future
 
 For questions or comments please see `our github
