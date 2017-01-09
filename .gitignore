@@ -19,7 +19,7 @@ MANIFEST
 
 # Sphinx
 docs/api
-docs/_build
+docs/build
 
 # Eclipse editor project files
 .project

@@ -56,14 +56,10 @@ env:
 matrix:
     include:
 
-        # Do a coverage test in Python 2.
-        - python: 2.7
-          env: SETUP_CMD='test --coverage'
-
         # Check for sphinx doc build warnings - we do this first because it
         # may run for a long time
         - python: 2.7
-          env: SETUP_CMD='build_sphinx -w'
+          env: SETUP_CMD='build_sphinx'
 
         # Try Astropy development version
         - python: 2.7
@@ -78,6 +74,13 @@ matrix:
         # Try numpy pre-release
         - python: 3.5
           env: NUMPY_VERSION=prerelease
+
+before_script:
+    - git clone https://github.com/astropy/sphinx-automodapi.git
+    - cd sphinx-automodapi; python setup.py install; cd -;
+
+    - git clone https://github.com/spacetelescope/stsci_sphinx_theme.git
+    - cd stsci_sphinx_theme; python setup.py install; cd -;
 
 install:
 
