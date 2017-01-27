@@ -7,6 +7,7 @@ def test_deprecation():
 
 
 def test_hselect_basic():
+    import os
     from ..hselect import Hselect
     from astropy.table import Table, MaskedColumn
     import numpy as np
@@ -20,15 +21,17 @@ def test_hselect_basic():
     add_col = MaskedColumn(np.ma.masked_array(['string', 'string', 'nope'], mask=[0, 0, 1]), dtype='S68')
     correct_table['A_STRING'] = add_col
 
-    hobj = Hselect(test_dir+'hselect_test.fits', 'A_FLOAT,A_STRING')
+    hobj = Hselect(os.path.join(test_dir,'hselect_test.fits'), 'A_FLOAT,A_STRING')
 
-    assert correct_table.colnames == hobj.table.colnames
+    assert correct_table.colnames == hobj.table.colnames, \
+        "Expected Table Cols: {} \n Hselect Returned: {}".format(correct_table.colnames, hobj.table.colnames)
 
     for colname in correct_table.colnames:
         assert np.all(correct_table[colname] == hobj.table[colname])
 
 
 def test_hselect_expression():
+    import os
     from ..hselect import Hselect
     from astropy.table import Table, MaskedColumn
     import numpy as np
@@ -40,15 +43,18 @@ def test_hselect_expression():
     add_col = MaskedColumn(np.ma.masked_array(['string'], mask=[0]), dtype='S68')
     correct_table['A_STRING'] = add_col
 
-    hobj = Hselect(test_dir+'hselect_test.fits', 'A_FLOAT,A_STRING', extension=(0, 1), expression="A_FLOAT<10")
+    hobj = Hselect(os.path.join(test_dir,'hselect_test.fits'), 'A_FLOAT,A_STRING', extension=(0, 1),
+                   expression="A_FLOAT<10")
 
-    assert correct_table.colnames == hobj.table.colnames
+    assert correct_table.colnames == hobj.table.colnames, \
+        "Expected Table Cols: {} \n Hselect Returned: {}".format(correct_table.colnames, hobj.table.colnames)
 
     for colname in correct_table.colnames:
         assert np.all(correct_table[colname] == hobj.table[colname])
 
 
 def test_hselect_equality():
+    import os
     from ..hselect import Hselect
     from astropy.table import Table, MaskedColumn
     import numpy as np
@@ -61,9 +67,11 @@ def test_hselect_equality():
     add_col = MaskedColumn(np.ma.masked_array(['string', 'string'], mask=[0, 0]), dtype='S68')
     correct_table['A_STRING'] = add_col
 
-    hobj = Hselect(test_dir+'hselect_test.fits', 'A_FLOAT,A_STRING', expression='A_STRING="string" AND A_FLOAT > 0')
+    hobj = Hselect(os.path.join(test_dir,'hselect_test.fits'), 'A_FLOAT,A_STRING',
+                   expression='A_STRING="string" AND A_FLOAT > 0')
 
-    assert correct_table.colnames == hobj.table.colnames
+    assert correct_table.colnames == hobj.table.colnames, \
+        "Expected Table Cols: {} \n Hselect Returned: {}".format(correct_table.colnames, hobj.table.colnames)
 
     for colname in correct_table.colnames:
         assert np.all(correct_table[colname] == hobj.table[colname])

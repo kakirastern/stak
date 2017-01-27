@@ -81,58 +81,58 @@ class Hselect(object):
         self.expr = expression
         self.table = Table()
 
-        self.__select()
-        self.__dict_to_table()
+        self._select()
+        self._dict_to_table()
 
-    def __select(self):
+    def _select(self):
         """Perform hselect like query on provided file names, inputs were setup in init, and output is
         stored in self.final_key_dict
         """
 
         # loop through all files, find requested keywords
         for filename in self.filename_list:
-            hdulist = fits.open(filename)
+            with fits.open(filename) as hdulist:
 
-            if self.all_ext:
-                self.extension = range(len(hdulist))
+                if self.all_ext:
+                    self.extension = range(len(hdulist))
 
-            for ext in self.extension:
+                for ext in self.extension:
 
-                try:
-                    header = hdulist[ext].header
-                except IndexError:
-                    continue
-                outer_key = '{}-{}'.format(filename, ext)
+                    try:
+                        header = hdulist[ext].header
+                    except IndexError:
+                        continue
+                    outer_key = '{}-{}'.format(filename, ext)
 
-                # check for expressions, will not make dictionary entry if expression false
-                # would be nice to use interpreter pattern here for more advanced expressions,
-                # but for now I'll stick with just 'AND's. check is expr is valid only once,
-                # earlier in code.
+                    # check for expressions, will not make dictionary entry if expression false
+                    # would be nice to use interpreter pattern here for more advanced expressions,
+                    # but for now I'll stick with just 'AND's. check is expr is valid only once,
+                    # earlier in code.
 
-                if self.expr != "None" and not depth_parse(expr_pyparse(self.expr), header):
-                    continue
+                    if self.expr != "None" and not depth_parse(expr_pyparse(self.expr), header):
+                        continue
 
-                self.final_key_dict[outer_key] = {}
+                    self.final_key_dict[outer_key] = {}
 
-                for search_keyword in self.keyword_list:
-                    # have to do regular expression matching for keywords
-                    if '*' in search_keyword:
-                        matches = wildcard_matches(header, search_keyword)
-                        for match in matches:
-                            self.final_key_dict[outer_key][match] = header[match]
-                            self.final_key_set.add((match, type(header[match])))
+                    for search_keyword in self.keyword_list:
+                        # have to do regular expression matching for keywords
+                        if '*' in search_keyword:
+                            matches = wildcard_matches(header, search_keyword)
+                            for match in matches:
+                                self.final_key_dict[outer_key][match] = header[match]
+                                self.final_key_set.add((match, type(header[match])))
 
-                    else:
-                        if search_keyword in header:
-                            self.final_key_dict[outer_key][search_keyword] = header[search_keyword]
-                            self.final_key_set.add((search_keyword, type(header[search_keyword])))
+                        else:
+                            if search_keyword in header:
+                                self.final_key_dict[outer_key][search_keyword] = header[search_keyword]
+                                self.final_key_set.add((search_keyword, type(header[search_keyword])))
 
-                if not self.final_key_dict[outer_key]:
-                    del self.final_key_dict[outer_key]
+                    if not self.final_key_dict[outer_key]:
+                        del self.final_key_dict[outer_key]
 
-            hdulist.close()
+                hdulist.close()
 
-    def __dict_to_table(self):
+    def _dict_to_table(self):
         """Format the final dictionary of keyword matches into a masked astropy table.
         Right now only taking data types of float and str.
 
@@ -319,8 +319,6 @@ def depth_parse(input_list, header):
 
 
 def main(args=None):
-    if args is None:
-        args = sys.argv[1:]
 
     parser = argparse.ArgumentParser(description='Select and print header keywords to the screen.  Works like IRAF' +
                                                  ' Hselect')
@@ -331,7 +329,7 @@ def main(args=None):
                         'full expression in quotes')
 
     try:
-        parsed = parser.parse_args(args)
+        parsed = parser.parse_args()
 
         if parsed.ext:
             extension_list = parsed.ext.split(',')
