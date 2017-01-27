@@ -11,8 +11,6 @@ Notes
 .. figure:: static/150pxblueconstuc.png
    :alt: Work in progress
 
-   blueConstuct
-
 **General Note about this package:**
 
 The tasks in this IRAF package include support for WCS updates after the
