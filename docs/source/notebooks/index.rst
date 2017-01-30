@@ -1,8 +1,8 @@
-***************************
+**************************
 Jupyter Notebook Tutorials
-***************************
+**************************
 
-Here we have Jupyter Notebooks organzied by usage/subject.
+Below you will Jupyter Notebook tutorials organzied by usage/subject.  Each notebook is grouped by one library/sub-library of IRAF tasks, which corresponds to the title of the notebook.  Putting together these tutorial notebooks is an ongoing task, `feedback <http://stak.userecho.com/>`_ and `contributions <https://github.com/spacetelescope/stak>`_ are welcome.
 
 Contents
 ========
@@ -32,6 +32,8 @@ Cosmic Ray Rejections:
   
 Index
 -----
+
+To search IRAF tasks by task name, see the index linked below.
 
 .. toctree::
   :maxdepth: 1
