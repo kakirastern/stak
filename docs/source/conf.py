@@ -347,3 +347,40 @@ texinfo_documents = [
 # If true, do not generate a @detailmenu in the "Top" node's menu.
 #
 # texinfo_no_detailmenu = False
+
+
+# this chunk of code is taken from the docs/conf.py of the stginga project
+# a simple/non-configurable extension that generates the rst files for ipython
+# notebooks
+def notebooks_to_rst(app):
+    from glob import glob
+    from nbconvert.nbconvertapp import NbConvertApp
+    from nbconvert.writers import FilesWriter
+
+    class OrphanizerWriter(FilesWriter):
+        def write(self, output, resources, **kwargs):
+            output = ':orphan:\n\n' + output
+            FilesWriter.write(self, output, resources, **kwargs)
+
+    olddir = os.path.abspath(os.curdir)
+    try:
+        srcdir = os.path.abspath(os.path.split(__file__)[0])
+        os.chdir(os.path.join(srcdir, 'notebooks'))
+        nbs = glob('*.ipynb')
+
+        app = NbConvertApp()
+        app.initialize(argv=[])
+        app.writer = OrphanizerWriter()
+
+        app.export_format = 'rst'
+        app.notebooks = nbs
+
+        app.start()
+    except:
+        pass
+    finally:
+        os.chdir(olddir)
+
+
+def setup(app):
+    app.connect('builder-inited', notebooks_to_rst)
