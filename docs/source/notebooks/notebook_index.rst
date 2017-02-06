@@ -15,4 +15,3 @@ Index
   images.imutil.rst
   noao.imred.crutil.rst
   tables.fitsio.rst
-  Template.rst

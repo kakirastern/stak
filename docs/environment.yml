@@ -8,6 +8,7 @@ dependencies:
   - astropy
   - numpydoc
   - pyparsing
+  - nbconvert >= 4.2.0
   - pip:
     - sphinx_automodapi
     - git+https://github.com/spacetelescope/stsci_sphinx_theme.git#egg=stsci_sphinx_theme
