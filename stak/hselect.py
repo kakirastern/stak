@@ -7,7 +7,6 @@ Hselect class, use to collate FITS header information
 from six import iteritems, string_types
 import operator
 import argparse
-import sys
 import pyparsing as pyp
 
 # THIRD-PARTY
@@ -156,7 +155,8 @@ class Hselect(object):
 
         """
 
-        # need to setup all numpy arrays first, then put into table, adding columns is apparently slow
+        # need to setup all numpy arrays first, then put into table, adding
+        # columns is apparently slow
         file_ext_list = self.final_key_dict.keys()
         num_rows = len(file_ext_list)
         final_keyword_list = list(self.final_key_set)
@@ -195,7 +195,8 @@ class Hselect(object):
             array_list[indx+2] = np.ma.array(array_list[indx+2], mask=mask_arr)
 
         # put everything into an astropy table
-        self.table = Table(array_list, names=tuple(col_names), dtype=tuple(data_types))
+        self.table = Table(array_list, names=tuple(col_names),
+                           dtype=tuple(data_types))
         self.table.sort(['Filename', 'Ext'])
 
 
@@ -218,7 +219,8 @@ def eval_keyword_expr(list_expr, header):
 
     """
 
-    operator_dict = {'=': operator.eq, '<': operator.lt, '<=': operator.le, '>': operator.gt, '>=': operator.ge}
+    operator_dict = {'=': operator.eq, '<': operator.lt, '<=': operator.le,
+                     '>': operator.gt, '>=': operator.ge}
 
     if len(list_expr) == 3:
         eval_function = operator_dict[list_expr[1]]
@@ -243,8 +245,8 @@ def eval_keyword_expr(list_expr, header):
 
 
 def wildcard_matches(header, wildcard_key):
-    """Take wildcard keyword and return all keyword name matches found in header.
-    Throwing out COMMENT and HISTORY cards.
+    """Take wildcard keyword and return all keyword name matches found in
+    header. Throwing out COMMENT and HISTORY cards.
 
     Parameters
     ----------
@@ -268,13 +270,13 @@ def wildcard_matches(header, wildcard_key):
 
 def expr_pyparse(full_expr):
     """
-    Run the full string evaluation expression through initial parsing.  This should
-    be some combination of AND,ORs using appropriate parenthesis, and the evaluation
-    statement should looks like so: KEYWORD = "value" for strings, KEYWORD = value for
-    integer/float values.  Example of full expression:
-    "(BUNIT = 'UNITLESS' and NAXIS1 = 1014) OR BUNIT='ELECTRONS/S'"
-    Can use lower or upper case for or/and argument, and spaces around operators not
-    required.
+    Run the full string evaluation expression through initial parsing.
+    This should be some combination of AND,ORs using appropriate parenthesis,
+    and the evaluation statement should looks like so: KEYWORD = "value" for
+    strings, KEYWORD = value for integer/float values.  Example of full
+    expression: "(BUNIT = 'UNITLESS' and NAXIS1 = 1014) OR BUNIT='ELECTRONS/S'"
+    Can use lower or upper case for or/and argument, and spaces around
+    operators not required.
 
     Parameters
     ----------
@@ -296,8 +298,9 @@ def expr_pyparse(full_expr):
     expr = pyp.Word('=<>')
 
     searchTerm = pyp.Group(keyword + expr + value)
-    searchExpr = pyp.operatorPrecedence(searchTerm, [(and_, 2, pyp.opAssoc.LEFT),
-                                                     (or_, 2, pyp.opAssoc.LEFT)])
+    searchExpr = pyp.operatorPrecedence(searchTerm,
+                                        [(and_, 2, pyp.opAssoc.LEFT),
+                                         (or_, 2, pyp.opAssoc.LEFT)])
     # change this to catch exception, this is most likely where parsing
     # exception will happen from bad user input
     return searchExpr.parseString(full_expr, parseAll=True).asList()
@@ -342,7 +345,8 @@ def depth_parse(input_list, header):
 
 def main(args=None):
 
-    parser = argparse.ArgumentParser(description='''Select and print FITS header keywords to the screen. Works like IRAF Hselect.''',
+    parser = argparse.ArgumentParser(description='''Select and print FITS
+    header keywords to the screen. Works like IRAF Hselect.''',
                                      epilog='''Examples:
         $hselect hselect *.fits BUNIT,TIME-OBS
         $hselect file1.fits NAXIS1 -e 1,2 -x 'NAXIS1=1014 AND BUNIT="SECONDS"' ''',
@@ -375,14 +379,17 @@ def main(args=None):
                     continue
 
         if parsed.ext and parsed.expression:
-            hsel = Hselect(parsed.filename, parsed.keywords, extension=tuple(extension_list),
+            hsel = Hselect(parsed.filename, parsed.keywords,
+                           extension=tuple(extension_list),
                            expression=parsed.expression)
 
         elif parsed.ext and not parsed.expression:
-            hsel = Hselect(parsed.filename, parsed.keywords, extension=tuple(extension_list))
+            hsel = Hselect(parsed.filename, parsed.keywords,
+                           extension=tuple(extension_list))
 
         elif not parsed.ext and parsed.expression:
-            hsel = Hselect(parsed.filename, parsed.keywords, expression=parsed.expression)
+            hsel = Hselect(parsed.filename, parsed.keywords,
+                           expression=parsed.expression)
 
         else:
             hsel = Hselect(parsed.filename, parsed.keywords)

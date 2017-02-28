@@ -2,8 +2,9 @@
 Jupyter Notebook Tutorials
 **************************
 
-Below you will find Jupyter Notebook tutorials organized by usage/subject.  Each notebook is grouped by one
-library/sub-library of IRAF tasks, which corresponds to the title of the notebook.  Putting together these tutorial
+Below you will find Jupyter Notebook tutorials organized by usage/subject.
+Each notebook is grouped by one library/sub-library of IRAF tasks, which
+corresponds to the title of the notebook.  Putting together these tutorial
 notebooks is an ongoing task, `feedback <http://stak.userecho.com/>`_ and
 `contributions <https://github.com/spacetelescope/stak>`_ are welcome.
 
