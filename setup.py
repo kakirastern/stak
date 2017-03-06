@@ -15,7 +15,7 @@ AUTHOR_EMAIL = 'ogaz@stsci.edu'
 LICENSE = 'BSD'
 URL = 'http://github.com/spacetelescope/stak'
 
-VERSION = '0.0.0.dev'
+VERSION = '0.1.0'
 
 # Indicates if this version is a release version
 RELEASE = 'dev' not in VERSION
