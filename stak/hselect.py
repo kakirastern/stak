@@ -133,6 +133,7 @@ class Hselect(object):
                             for match in matches:
                                 self.final_key_dict[outer_key][match] = \
                                     header[match]
+
                                 self.final_key_set.add((match,
                                                         type(header[match])))
 
@@ -149,9 +150,10 @@ class Hselect(object):
 
                 hdulist.close()
 
+
     def _dict_to_table(self):
         """Format the final dictionary of keyword matches into a masked
-        astropy table. Right now only taking data types of float and str.
+        astropy table.
 
         """
 
