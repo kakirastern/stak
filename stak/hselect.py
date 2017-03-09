@@ -78,7 +78,7 @@ class Hselect(object):
         self.filename_list = parseinput.parseinput(filename_list)[0]
         self.final_key_dict = {}
         self.keyword_list = keywords.split(",")
-        self.final_key_set = set()
+        self.keyword_types = dict()
 
         if not isinstance(extension, tuple):
             raise ValueError("extension parameter must be a tuple")
@@ -127,29 +127,35 @@ class Hselect(object):
                     self.final_key_dict[outer_key] = {}
 
                     for search_keyword in self.keyword_list:
-                        # have to do regular expression matching for keywords
+
+                        mini_key_list = []
+
+                        # Have to do regular expression matching for keywords
                         if '*' in search_keyword:
                             matches = wildcard_matches(header, search_keyword)
-                            for match in matches:
-                                self.final_key_dict[outer_key][match] = \
-                                    header[match]
+                            mini_key_list += matches
+                        elif search_keyword in header:
+                            mini_key_list.append(search_keyword)
 
-                                self.final_key_set.add((match,
-                                                        type(header[match])))
+                        for foundk in mini_key_list:
+                            # If duplicate differently typed keywords are
+                            # found, change type to str
+                            if foundk not in self.keyword_types:
+                                self.keyword_types[foundk] = \
+                                    type(header[foundk])
 
-                        else:
-                            if search_keyword in header:
-                                self.final_key_dict[outer_key][search_keyword]\
-                                    = header[search_keyword]
-                                self.final_key_set.add((
-                                    search_keyword,
-                                    type(header[search_keyword])))
+                            elif foundk in self.keyword_types and \
+                                    not isinstance(header[foundk],
+                                                   self.keyword_types[foundk]):
+                                self.keyword_types[foundk] = str
 
+                            self.final_key_dict[outer_key][foundk] = \
+                                header[foundk]
+
+                    # Check for empty file-ext entry and delete entry if
+                    # found.
                     if not self.final_key_dict[outer_key]:
                         del self.final_key_dict[outer_key]
-
-                hdulist.close()
-
 
     def _dict_to_table(self):
         """Format the final dictionary of keyword matches into a masked
@@ -161,7 +167,6 @@ class Hselect(object):
         # columns is apparently slow
         file_ext_list = self.final_key_dict.keys()
         num_rows = len(file_ext_list)
-        final_keyword_list = list(self.final_key_set)
 
         array_list = [[elem.split('-')[0] for elem in file_ext_list],
                       [int(elem.split('-')[1]) for elem in file_ext_list]]
@@ -172,17 +177,17 @@ class Hselect(object):
         dumb_indx_dict = {}
 
         # make initial empty data and bool arrays
-        for indx, key_tuple in enumerate(final_keyword_list):
+        for indx, key in enumerate(self.keyword_types):
             # make dumb keyword index dict, probably a better way to do this
-            dumb_indx_dict[key_tuple[0]] = indx
-            if key_tuple[1] == str:
+            dumb_indx_dict[key] = indx
+            if self.keyword_types[key] == str:
                 data_type = 'S68'
             else:
-                data_type = key_tuple[1]
+                data_type = self.keyword_types[key]
 
             array_list.append(np.zeros(num_rows, dtype=data_type))
             mask_list.append(np.ones(num_rows, dtype=bool))
-            col_names.append(key_tuple[0])
+            col_names.append(key)
             data_types.append(data_type)
 
         # now fill in arrays and mask arrays
@@ -261,12 +266,16 @@ def wildcard_matches(header, wildcard_key):
     matches : list
     """
 
-    header_keys = header.keys()
-    if 'COMMENT' in header_keys:
-        header_keys.remove('COMMENT')
-    if 'HISTORY' in header_keys:
-        header_keys.remove('HISTORY')
     matches = header[wildcard_key].keys()
+    while 'COMMENT' in matches:
+        matches.remove('COMMENT')
+    while 'HISTORY' in matches:
+        matches.remove('HISTORY')
+
+    # Have to remove blank section headers
+    while '' in matches:
+        matches.remove('')
+
     return matches
 
 

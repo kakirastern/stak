@@ -9,8 +9,9 @@ from setuptools import setup, find_packages
 
 PACKAGENAME = 'stak'
 DESCRIPTION = 'STAK (the STScI Analysis Toolkit) is a general purpose library \
-        to provide computational resources for astronomical data reduction and analysis.'
-AUTHOR = 'Sarah Ogaz, Justin Ely'
+        to provide computational resources for astronomical data reduction  \
+        and analysis.'
+AUTHOR = 'Sara Ogaz, Justin Ely'
 AUTHOR_EMAIL = 'ogaz@stsci.edu'
 LICENSE = 'BSD'
 URL = 'http://github.com/spacetelescope/stak'
