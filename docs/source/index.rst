@@ -25,12 +25,6 @@ STAK Package Documentation
 
   commandline/index      
 
-**Notebooks Tutorials**
-
-.. toctree::
-  :maxdepth: 1
-	      
-  notebooks/index
 
 **Modules/Classes**
 
@@ -38,6 +32,11 @@ STAK Package Documentation
   :maxdepth: 1
 
   stak/index
+
+
+STAK Jupyter Notebooks
+======================
+Notebooks can be found here:
 
 
 The STAK Project Goal
@@ -78,13 +77,4 @@ Contributing
 ============
 STAK encourages outside contributions.  Please visit our
 `github page <https://github.com/spacetelescope/stak>`_.
-
-Index
-=====
-
-.. toctree::
-  :maxdepth: 2
-
-  stak/index.rst
-  notebooks/index.rst
 

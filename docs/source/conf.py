@@ -31,7 +31,7 @@ sys.path.insert(0, os.path.abspath('../..'))
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 
-import stsci_sphinx_theme
+import stsci_rtd_theme
 
 extensions = [
     'sphinx_automodapi.automodapi',
@@ -130,7 +130,7 @@ todo_include_todos = False
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'stsci_sphinx_theme'
+html_theme = 'stsci_rtd_theme'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -139,7 +139,7 @@ html_theme = 'stsci_sphinx_theme'
 # html_theme_options = {}
 
 # Add any paths that contain custom themes here, relative to this directory.
-html_theme_path = [stsci_sphinx_theme.get_html_theme_path()]
+html_theme_path = [stsci_rtd_theme.get_html_theme_path()]
 
 # The name for this set of Sphinx documents.
 # "<project> v<release> documentation" by default.
@@ -348,39 +348,5 @@ texinfo_documents = [
 #
 # texinfo_no_detailmenu = False
 
-
-# this chunk of code is taken from the docs/conf.py of the stginga project
-# a simple/non-configurable extension that generates the rst files for ipython
-# notebooks
-def notebooks_to_rst(app):
-    from glob import glob
-    from nbconvert.nbconvertapp import NbConvertApp
-    from nbconvert.writers import FilesWriter
-
-    class OrphanizerWriter(FilesWriter):
-        def write(self, output, resources, **kwargs):
-            output = ':orphan:\n\n' + output
-            FilesWriter.write(self, output, resources, **kwargs)
-
-    olddir = os.path.abspath(os.curdir)
-    try:
-        srcdir = os.path.abspath(os.path.split(__file__)[0])
-        os.chdir(os.path.join(srcdir, 'notebooks'))
-        nbs = glob('*.ipynb')
-
-        app = NbConvertApp()
-        app.initialize(argv=[])
-        app.writer = OrphanizerWriter()
-
-        app.export_format = 'rst'
-        app.notebooks = nbs
-
-        app.start()
-    except:
-        pass
-    finally:
-        os.chdir(olddir)
-
-
 def setup(app):
-    app.connect('builder-inited', notebooks_to_rst)
+    app.add_stylesheet("stsci.css")
