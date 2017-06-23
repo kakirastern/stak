@@ -34,7 +34,7 @@ env:
         # so Cython is required for testing. If your package does not include
         # Cython code, you can set CONDA_DEPENDENCIES=''
         - CONDA_DEPENDENCIES='Cython six stsci-hst'
-        - CONDA_SPHINX_DEPENDENCIES='Cython six stsci-hst nbconvert'
+        - CONDA_SPHINX_DEPENDENCIES='sphinx=1.5 Cython six stsci-hst nbconvert'
 
         # Conda packages for affiliated packages are hosted in channel
         # "astropy" while builds for astropy LTS with recent numpy versions
@@ -66,8 +66,10 @@ matrix:
         # Try Astropy development version
         - python: 2.7
           env: ASTROPY_VERSION=development
+               CONDA_DEPENDENCIES=$CONDA_SPHINX_DEPENDENCIES
         - python: 3.5
           env: ASTROPY_VERSION=development
+               CONDA_DEPENDENCIES=$CONDA_SPHINX_DEPENDENCIES
         #- python: 2.7
         #  env: ASTROPY_VERSION=lts
         #- python: 3.5
