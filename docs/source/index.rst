@@ -1,7 +1,3 @@
-.. image:: /images/stsci_pri_combo_mark_white_bkgd.png
-   :align: center
-   :scale: 8
-
 ================
 The STAK Project
 ================
@@ -34,11 +30,6 @@ STAK Package Documentation
   stak/index
 
 
-STAK Jupyter Notebooks
-======================
-Notebooks can be found here:
-
-
 The STAK Project Goal
 =====================
 The `Space Telescope Science Data Analysis System (STSDAS)
@@ -57,12 +48,26 @@ through the format of Jupyter Notebooks.
 **Important Note: The HST and JWST pipelines will NOT be part of this package,
 unlike the IRAF STSDAS package.**
 
-|
+
+STAK Jupyter Notebooks
+======================
+A main goal of the STAK project is to provide a guide/tutorials for
+users moving from IRAF to Python.  We are building `Jupyter notebooks
+<http://jupyter-notebook.readthedocs.io/en/latest/>`_ for most IRAF
+packages included in the IRAF STScI distribution.  The Jupyter notebook
+provides documentation combined with runnable Python code in one interactive
+space.
+
+The Jupyter notebooks for the STAK project are stored in a separate repo, with
+a separate doc page, which can be found here:
+http://stak-notebooks.readthedocs.io/en/latest/
+
+INFO ON JOE'S DOWNLOAD SCRIPT GOES HERE
+
 
 Getting Help and User Feedback
 ==============================
-You can send us any comments or questions at our
-`echo page <http://stak.userecho.com/>`_.  For bug reports please see
+You can send us any comments, questions or bug reports on
 our `github page <https://github.com/spacetelescope/stak>`_
 
 We would love to hear feedback from the community, included but not limited to:
@@ -75,6 +80,13 @@ We would love to hear feedback from the community, included but not limited to:
 
 Contributing
 ============
-STAK encourages outside contributions.  Please visit our
-`github page <https://github.com/spacetelescope/stak>`_.
+STAK encourages outside contributions!  Please visit our github pages for
+`stak <https://github.com/spacetelescope/stak>`_ and `stak-notebooks
+<https://github.com/spacetelescope/stak-notebooks>`_ to contribute.  If you
+need a github contribution primer, `here's one for forking and pushing
+<https://help.github.com/articles/fork-a-repo/>`_. For a general git/github
+primer there are many resources on the internet, but `this one
+<https://guides.github.com/activities/hello-world/>`_ might be a good place to
+start.  If you have any questions or would like further guidance on how to
+contribute don't hesitate to post an issue on either of our github pages.
 

@@ -18,9 +18,11 @@ computational resources for astronomical data reduction and analysis.
 
 Part of this effort is also to ease the transition from legacy IRAF scripts and
 analysis routines into the Python ecosystem.  For help translation your IRAF
-functions into their Python equivalent, see our `notebook tutorials <http://stak.readthedocs.io/en/latest/notebooks/index.html>`_.
+functions into their Python equivalent, see our `notebook tutorials
+<http://stak-notebooks.readthedocs.io/en/latest/>`_.
 
-You can read the full specification at `the online documentation <http://stak.readthedocs.io/>`_.
+You can read the full specification at `the online documentation
+<http://stak.readthedocs.io/>`_.
 
 Contributing
 ============
@@ -30,6 +32,3 @@ for bugs, feedback, or new features you would like to see.
 
 If there is an issue you would like to work on, please leave a comment and
 we will be happy to assist. New contributions and contributors are very welcome!
-
-Want to ask for a new feature, but don't want to sign up for GitHub?  Hop over
-to our `feature tracker <http://stak.userecho.com/>`_ and leave us your thoughts.
