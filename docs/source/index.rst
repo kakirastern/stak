@@ -7,27 +7,8 @@ resource for Python astronomy software and tutorial materials.
 
 STAK Package Documentation
 ==========================
-**STAK Module Tutorials**
-
-.. toctree::
-  :maxdepth: 1
-
-  walkthrough/walk_hselect	      
-
-**Command Line Tools**
-
-.. toctree::
-  :maxdepth: 1
-
-  commandline/index      
-
-
-**Modules/Classes**
-
-.. toctree::
-  :maxdepth: 1
-
-  stak/index
+STAK package is currently empty, acting as a placeholder for future code. The
+current release is focused on the Jupyter Notebook tutorials, see below.
 
 
 The STAK Project Goal

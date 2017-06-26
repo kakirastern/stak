@@ -24,6 +24,7 @@ functions into their Python equivalent, see our `notebook tutorials
 You can read the full specification at `the online documentation
 <http://stak.readthedocs.io/>`_.
 
+
 Contributing
 ============
 Please open a new `issue <https://github.com/spacetelescope/stak/issues>`_

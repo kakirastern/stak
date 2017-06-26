@@ -25,11 +25,9 @@ with open(os.path.join(PACKAGENAME, 'version.py'), 'w+') as fp:
     fp.write('__all__ = [\'__version__\', \'RELEASE\']\n')
     fp.write('__version__ = \'{0}\'\nRELEASE = {1}\n'.format(VERSION, RELEASE))
 
+
 entry_points = {
-        'console_scripts': [
-            'hselect = stak.hselect:main',
-            'stak_nbget = stak.nbget:main'
-            ]
+        'console_scripts': ['stak_nbget = stak.nbget:main']
         }
 
 setup(name=PACKAGENAME,
